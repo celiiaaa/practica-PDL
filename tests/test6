@@ -1,0 +1,77 @@
+/* 
+TEST 6 PARSER: 
+Sentencias concatenadas con un punto y coma
+*/
+
+/* Declaraciones */
+
+// Variable
+let Var1;
+
+// Variables
+let x, var1, _s1ze_, VAR1;
+
+// Objeto AJSON
+type Objeto = { a: int, b: float, c: character, d: boolean };
+type Lista = { objeto1: Objeto, objeto2: Objeto};
+
+// Variable y objeto AJSON
+let variable1, variable2: Objeto, variable3;
+
+
+/* Asignaciones */
+
+// Variable
+Var1 = 1e1;
+Var1 = .023;
+Var1 = 0x1ABF;
+Var1 = 0b1111000;
+Var1 = 07345;
+Var1 = .1e-10;
+
+// Variables
+x, var1, _s1ze_, VAR1 = 0xFF / (0b101 * (0702 - 1E-10));
+
+// Objeto AJSON
+let miobjeto: Objeto = {
+    a: 1,
+    b: 1.0,
+    c: 'a',
+    d: tr
+};
+
+let milista: Lista = {
+    objeto1: { a: 10, b: 1.0, c: 'a', d: tr},
+    objeto2: { a: 0, b: .101, c: 'z', d: fl }
+};
+
+// Variable y objeto AJSON
+variable1, variable2, variable3 = 10 - 5 * x / b + c + !d;
+
+// Atributos de objeto AJSON
+x = miobjeto.a;
+var1 = miobjeto.a + miobjeto.b * 1.1;
+var1 = milista["objeto1"].a - milita.objeto2["b"];
+milista["objeto1"].a = var1 + 1 || 0;
+
+/* Declaraciones  – asignaciones */
+
+// Variable
+let x = 1 + .1e-1;
+
+// Varaibles
+let x, y, z = '$';
+
+// Varaibles y objeto AJSON
+let var_1, var_2, milista.objeto1["a"] = a + b * !c - d;
+
+/* Llamadas a las funciones */
+
+// Función sin parámetros
+funcion1();
+
+// Función con parámetros
+funcion2(1, milista.objeto1["c"], 3-5/2, funcion1(), 'a', tr);
+
+// Función con parámetros y retorno
+let x = funcion2(1, milista.objeto1["c"], 3-5/2, funcion1(), 'a', tr);

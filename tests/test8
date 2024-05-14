@@ -1,0 +1,72 @@
+/* 
+TEST 8 PARSER: 
+Objeto AJSON 
+*/
+
+// Declaración
+type Color = {"r": float, "g": float, "b": float};
+type Objeto = {"x": float, "y": float, "color": Color};
+type Lista = {objeto_uno: Objeto, objeto_dos: Objeto};
+
+// Declaración de otra forma
+type Lista = {
+    objeto_uno: {
+        "x": float, 
+        "y": float, 
+        "color": {
+            "r": float, 
+            "g": float, 
+            "b": float
+        },
+    }, 
+    objeto_dos: {
+        "x": float, 
+        "y": float, 
+        "color": {
+            "r": float, 
+            "g": float, 
+            "b": float
+        }
+    }
+};
+
+// Declaración de un objeto vacío
+type Vacio = {};
+
+// Asignación
+let color1 : Color = {"r": 0, "g": 0, "b": 0};
+let color2 : Color = {"r": .23, "g": 20., "b": 3.15};
+
+let objeto1: Objeto = {"x": 0, "y": 0, "color": color1};
+let objeto2: Objeto = {"x": 0, "y": 0, "color": color2};
+
+let lista: Lista = {objeto_uno: objeto1, objeto_dos: objeto2};
+
+// Asiganación de otra forma
+let lista: Lista = {
+    objeto_uno: {
+        "x": 0, 
+        "y": 0, 
+        "color": {
+            "r": 0, 
+            "g": 0, 
+            "b": 0
+            }
+        }, 
+    objeto_dos: {
+        "x": 0, 
+        "y": 0, 
+        "color": {
+            "r": .23, 
+            "g": 20., 
+            "b": 3.15
+            }
+        }
+};
+
+// Asignación de un objeto vacío
+let vacio: Vacio = {};
+
+// Atributos
+let x = lista.objeto_uno.x;
+let y = lista["objeto_uno"].y;
