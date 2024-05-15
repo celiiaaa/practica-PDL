@@ -1,0 +1,3 @@
+/* Mi primer programa */ 
+let variable;
+variable = 10;

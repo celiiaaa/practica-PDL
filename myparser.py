@@ -92,10 +92,12 @@ class ParserClass:
     # Declaracion de un objeto
     def p_dec_obj(self, p):
         '''dec_obj : TYPE ID EQUAL obj_declaracion'''
+        pass
 
     # Asignación de un objeto
     def p_asg_obj(self, p) :
         '''asg_obj : LET ID COLON ID EQUAL obj_asignacion'''
+        pass
 
     # Declaración de un objeto
     def p_obj_declaracion(self, p):

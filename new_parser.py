@@ -64,51 +64,151 @@ class ParserClass:
     def p_expresion(self, p):
         '''expresion : binaria
                      | unaria
-                     | primaria
+                     | literal
+                     | PARENTHESISOPEN expresion PARENTHESISCLOSE
                      | asg_ajson'''
         pass
 
-    def p_binaria(self, p):
+    def p_binaria_aritmetica1(self, p):
         '''binaria : expresion PLUS expresion
-                   | expresion MINUS expresion
-                   | expresion TIMES expresion
-                   | expresion DIV expresion
-                   | expresion CONJUNCTION expresion
-                   | expresion DISJUNCTION expresion
-                   | expresion EQ expresion
-                   | expresion LT expresion
+                   | expresion MINUS expresion'''
+        
+        num1, op, num2 = p[1], p[2], p[3]
+        # Casting
+        if num1[0] != num2[0]:
+            if num1[0] == 'float':
+                num2 = ('float', float(num2[1]))
+            elif num2[0] == 'float':
+                num1 = ('float', float(num1[1]))
+            elif num1[0] == 'int':
+                num2 = ('int', int(num2[1]))
+            elif num2[0] == 'int':
+                num1 = ('int', int(num1[1]))
+        # Operar
+        if op == '+':
+            p[0] = (num1[0], num1[1] + num2[1])
+        elif op == '-':
+            p[0] = (num1[0], num1[1] - num2[1])
+
+        pass
+        
+    def p_binaria_aritmetica2(self, p):
+        '''binaria : expresion TIMES expresion
+                   | expresion DIV expresion'''
+        
+        num1, op, num2 = p[1], p[2], p[3]
+
+         # Casting
+        if num1[0] != num2[0]:
+            if num1[0] == 'float':
+                num2 = ('float', float(num2[1]))
+            elif num2[0] == 'float':
+                num1 = ('float', float(num1[1]))
+            elif num1[0] == 'int':
+                num2 = ('int', int(num2[1]))
+            elif num2[0] == 'int':
+                num1 = ('int', int(num1[1]))
+            else:
+                print(f"ERROR[Sem] La operación {num1} {op} {num2} no es válida.")
+        # Operar
+        if op == '*':
+            p[0] = (num1[0], num1[1] * num2[1])
+        elif op == '/':
+            p[0] = (num1[0], num1[1] / num2[1])
+            
+        pass
+        
+    def p_binaria_booleana1(self, p):
+        '''binaria : expresion LT expresion
                    | expresion GT expresion
                    | expresion LE expresion
                    | expresion GE expresion'''
+        
+        num1, op, num2 = p[1], p[2], p[3]
+
         pass
+
+    def p_binaria_booleana2(self, p):
+        '''binaria : expresion EQ expresion'''
+
+        num1, op, num2 = p[1], p[2], p[3]
+
+        pass
+
+    def p_binaria_conjunto(self, p):
+        '''binaria : expresion CONJUNCTION expresion
+                   | expresion DISJUNCTION expresion'''
+        
+        num1, op, num2 = p[1], p[2], p[3]
+
+        pass
+
 
     # Operaciones aritmeticas unitarias
     def p_unaria(self, p):
         '''unaria : PLUS expresion %prec UPLUS
                   | MINUS expresion %prec UMINUS
                   | NEG expresion'''
+        
+        op, num = p[1], p[2]
+        if op == '+':
+            p[0] = (num[0], +num[1])
+        elif op == '-':
+            p[0] = (num[0], +num[1])
+        
+        # NO SÉ HACER EL NEGADO!!
+
         pass
 
     # No se puede aceptar una asignacion if (char == 'a' && i = (4 + 5))
 
-    def p_primaria(self, p):
-        '''primaria : literal
-                    | ID
-                    | PARENTHESISOPEN expresion PARENTHESISCLOSE'''
+    def p_literal_identificador(self, p):
+        '''literal : ID'''
+        name_var = p[1]
+        if name_var not in self.simbolos:
+            print(f"[ERROR][Sem] Variable {name_var} no existe.")
+        else:
+            p[0] = self.simbolos[name_var]
         pass
 
-    def p_literal(self, p):
+    def p_literal_entero(self, p):
         '''literal : ENTERO
-                   | REAL
                    | BIN
                    | OCT
-                   | NCIENT
-                   | HEX
-                   | CHAR
-                   | TR
-                   | FL
-                   | NULL
-                   | function_call
+                   | HEX'''
+        
+        p[0] = ('int', p[1])
+        pass
+
+    def p_literal_real(self, p):
+        '''literal : REAL
+                   | NCIENT'''
+        
+        p[0] = ('float', p[1])
+        pass
+    
+    def p_literal_char(self, p):
+        '''literal : CHAR'''
+
+        p[0] = ('char', p[1])
+        pass
+
+    def p_literal_bool(self, p):
+        '''literal : TR
+                   | FL'''
+        
+        p[0] = ('bool', p[1])
+        pass
+
+    def p_literal_nulo(self, p):
+        '''literal : NULL'''
+
+        p[0] = (None, p[1])
+        pass
+
+
+    def p_literal(self, p):
+        '''literal : function_call
                    | acceso_propiedad'''
         pass
 
@@ -126,6 +226,17 @@ class ParserClass:
     def p_declaracion(self, p):
         '''declaracion : LET lista_id
                        | LET lista_id EQUAL expresion'''
+        
+        if len(p) == 3:
+            # Actualizar la tabla de simbolos con nuevas variables
+            for id in p[2]:
+                self.simbolos[id] = (None, None)
+        elif len(p) == 5:
+            # Verificar l
+            for id in p[2]:
+                # Asignar el tipo del valor asignado a la variable.
+                self.simbolos[id] = p[4]
+        
         pass
 
     def p_lista_id(self, p):
@@ -138,25 +249,38 @@ class ParserClass:
 
     def p_asignacion(self, p):
         '''asignacion : lista_id EQUAL expresion'''
+
+        if len(p) == 4:
+            name_var = p[1]
+            valor_var = p[3]
+            tipo_var = self.simbolos[name_var]
+            if tipo_var != self.get_tipo_expresion(valor_var):
+                print("ERROR[sem] Tipo incompatible en la asignación.")
+        
         pass
 
-    # Se decide que lo que haya entre llaves no puede ser vacío.
-    # Hay un if / if – else.
+    # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
 
+    # Hay un if / if – else.
     # Condición
     def p_condicion(self, p):
-        '''condicion : IF PARENTHESISOPEN expresion PARENTHESISCLOSE LLAVEA bloque_programa LLAVEC otra_condicion'''
+        '''condicion : IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion'''
         pass
 
     def p_otra_condicion(self, p):
         '''otra_condicion : 
-                          | ELSE LLAVEA bloque_programa LLAVEC'''
-        
+                          | ELSE bloque_llaves'''
+        pass
+
     # Se decide que lo que haya entre llaves no puede ser vacío.
+
+    def p_bloque_llaves(self, p):
+        '''bloque_llaves : LLAVEA bloque_programa LLAVEC'''
+        pass
 
     # Bucle
     def p_bucle(self, p):
-        '''bucle : WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE LLAVEA bloque_programa LLAVEC'''
+        '''bucle : WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves'''
         pass
 
      # Tipo de las funciones
@@ -186,17 +310,17 @@ class ParserClass:
         pass
     
     def p_function_call(self, p):
-        '''function_call : ID PARENTHESISOPEN lista_expresion PARENTHESISCLOSE'''
+        '''function_call : ID PARENTHESISOPEN lista_param PARENTHESISCLOSE'''
         pass
 
-    def p_lista_expresion(self, p):
-        '''lista_expresion : 
-                           | lista_expresion_rec'''
+    def p_lista_param(self, p):
+        '''lista_param : 
+                       | lista_param_rec'''
         pass
 
-    def p_lista_expresion_rec(self, p):
-        '''lista_expresion_rec : expresion COMA lista_expresion_rec
-                               | expresion'''
+    def p_lista_param_rec(self, p):
+        '''lista_param_rec : expresion COMA lista_param_rec
+                           | expresion'''
         pass
 
     # OBJETOS AJSON.
@@ -205,25 +329,25 @@ class ParserClass:
         pass
     
     def p_def_ajson(self, p):
-        '''def_ajson : LLAVEA propiedades LLAVEC'''
+        '''def_ajson : LLAVEA def_propiedades LLAVEC'''
         pass
     
     # Puede ser que las propiedades de los objetos estén vacías
 
-    def p_propiedades(self, p):
-        '''propiedades : 
-                       | ID COLON valor_propiedad propiedades_rec
-                       | STRING COLON valor_propiedad propiedades_rec'''
+    def p_def_propiedades(self, p):
+        '''def_propiedades : 
+                           | ID COLON valor_def_propiedad def_propiedades_rec
+                           | STRING COLON valor_def_propiedad def_propiedades_rec'''
         pass
         
-    def p_propiedades_rec(self, p):
-        '''propiedades_rec : COMA propiedades
-                           | '''
+    def p_def_propiedades_rec(self, p):
+        '''def_propiedades_rec : COMA def_propiedades
+                               | '''
         pass
     
-    def p_valor_propiedad(self, p):
-        '''valor_propiedad : tipo
-                           | def_ajson'''
+    def p_valor_def_propiedad(self, p):
+        '''valor_def_propiedad : tipo
+                               | def_ajson'''
         pass
 
     def p_asignacion_objeto(self, p):
@@ -231,26 +355,26 @@ class ParserClass:
         pass
     
     def p_asg_ajson(self, p):
-        '''asg_ajson : LLAVEA propiedades_asg LLAVEC''' 
+        '''asg_ajson : LLAVEA asg_propiedades LLAVEC''' 
         pass
     
-    def p_propiedades_asg(self, p):
-        '''propiedades_asg :
-                           | ID COLON valor_propiedad_asg propiedades_asg_rec
-                           | STRING COLON valor_propiedad_asg propiedades_asg_rec'''
+    def p_asg_propiedades(self, p):
+        '''asg_propiedades :
+                           | ID COLON valor_asg_propiedad asg_propiedades_rec
+                           | STRING COLON valor_asg_propiedad asg_propiedades_rec'''
         pass
     
-    def p_propiedades_asg_rec(self, p):
-        '''propiedades_asg_rec : COMA propiedades_asg
+    def p_asg_propiedades_rec(self, p):
+        '''asg_propiedades_rec : COMA asg_propiedades
                                | '''
         pass
 
-    def p_valor_propiedad_asg(self, p):
-        '''valor_propiedad_asg : expresion''' 
+    def p_valor_asg_propiedad(self, p):
+        '''valor_asg_propiedad : expresion''' 
         pass
         
 
-        
+
     def find_column(self, input, token):
         line_start = input.rfind('\n', 0, token.lexpos) + 1
         return (token.lexpos - line_start) + 1

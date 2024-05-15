@@ -6,13 +6,12 @@ Detección de erres
 // Sentencias
 
 let 0_valor;
-type Color : {r: int, g: int, b: int};
+type Color : {r: int, g: int, b: char};
 let;
-let valor1, valor2,
 let valor3 : int;
 let val1 = "cadena";
-let color1 : Color = {a: "hola", "g": 0, "b": 0};
-let variable1 = 1, variable2 = 2;
+let color1 : Color = {a: "hola", "g": 0, "b": 'o'};
+let variable1 = 1, variable2;
 let variable3, variable4 = 1, 2;
 let var = funcion("argumento");
 
