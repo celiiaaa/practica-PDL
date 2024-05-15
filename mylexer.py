@@ -168,11 +168,13 @@ class LexerClass:
     
     def t_UNICOMMENT(self, t):
         r'\/\/.*'
+        t.lexer.lineno += 1
         t.value = t.value[2:].strip() # Elimina los caracteres // y elimina espacios en blanco al principio y al final
         pass
     
     def t_MULTICOMMENT(self, t):
         r'/\*(.|\n)*?\*/'
+        t.lexer.lineno += t.value.count("\n")
         t.value = t.value[2:-2].strip()  # Elimina los caracteres /* y */ y elimina espacios en blanco al principio y al final
         pass
 

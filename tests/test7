@@ -34,9 +34,6 @@ if (a == 0) {
     a = 6;
 }
 
-// Condicion vacía
-if (a == 0) {}
-
 /* Bucles */
 
 // Bucle simple
@@ -93,14 +90,13 @@ while (x < 10) {
 }
 
 
-// Bucle vacío
-while(true) {}
-
 /* Funciones */
 
 // Función simple
 function suma(a: int, b: int): int {
-    return a + b;
+    let suma;
+    suma = a + b;
+    return suma;
 }
 
 // Función compleja
@@ -143,13 +139,10 @@ function funcion2(obj: AJSON, a: int, b: character, end: boolean): int {
     return result;
 }
 
-// Función vacia
-function vacia(): int {
-    return 1;
-}
-
 // Función que retorne un objeto AJSON
 type Point = { x: int, y: int };
 function get_point_after_jumn(point: Point): Point {
-    return { x: point.x, y: point.y + 10 };
+    let sum = point.y + 10;
+    return { x: point.x, y: sum };
 }
+

@@ -19,12 +19,13 @@ class ParserClass:
     start = 'axioma'
 
     precedence = (
+        ('left', 'DISJUNCTION'),
+        ('left', 'CONJUNCTION'),
+        ('left', 'EQ', 'LT', 'GT', 'LE', 'GE'),
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIV'),
         ('right', 'UPLUS', 'UMINUS'),
-        ('right', 'NEG'),
-        ('left', 'CONJUNCTION', 'DISJUNCTION'),
-        ('left', 'EQ', 'LT', 'GT', 'LE', 'GE')
+        ('right', 'NEG')
     )
     
     # Vacio
