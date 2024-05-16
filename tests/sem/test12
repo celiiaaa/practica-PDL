@@ -1,0 +1,6 @@
+/* Funciones */
+
+function suma(a: int, b: int): int {
+    let res = a + b;
+    return res;
+}

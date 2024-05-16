@@ -11,10 +11,8 @@ class ParserClass:
         self.lexer = LexerClass().lexer
         self.parser = yacc.yacc(module=self)
         self.contenido = None
-    
-    simbolos = {}           # Tabla de símbolos
-
-    registro = {}           # Tabla de registro
+        self.simbolos = {}          # Tabla de símbolos
+        self.registr = {}           # Tabla de registro
 
     start = 'axioma'
 
@@ -108,6 +106,8 @@ class ParserClass:
             num1 = ('int', ord(num1[1]))
         if num2[0] == 'char':
             num2 = ('int', ord(num2[1]))
+        if num1[0] == 'bool' or num2[0] == 'bool':
+            print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
 
         if num1[0] == 'float':
             num2 = ('float', float(num2[1]))
@@ -124,7 +124,6 @@ class ParserClass:
             p[0] = (num1[0], num1[1] / num2[1])
 
         pass
-
         
     def p_binaria_booleana1(self, p):
         '''binaria : expresion LT expresion
@@ -135,6 +134,11 @@ class ParserClass:
         num1, op, num2 = p[1], p[2], p[3]
         print(f"Booleana 1: {num1} {op} {num2}")
         # Casting
+        if num1[0] == 'char':
+            num1 = ('int', ord(num1[1]))
+        if num2[0] == 'char':
+            num2 = ('int', ord(num2[1]))
+
         if num1[0] != num2[0]:
             if num1[0] == 'float':
                 num2 = ('float', float(num2[1]))
@@ -278,29 +282,55 @@ class ParserClass:
 
     def p_declaracion(self, p):
         '''declaracion : LET lista_id
-                       | LET lista_id EQUAL expresion'''
+                       | LET lista_id_norm EQUAL expresion'''
         
-        """ if len(p) == 3:
-            # Actualizar la tabla de simbolos con nuevas variables
+        if len(p) == 3:
+            # Actualizar la tabla de simbolos con nuevas variables
             for id in p[2]:
                 if id in self.simbolos:
                     print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
                 else:
                     self.simbolos[id] = (None, None)
+                    print(f"Declaracion: {id}")
         elif len(p) == 5:
             # Verificar l
             for id in p[2]:
                 # Asignar el tipo del valor asignado a la variable.
-                self.simbolos[id] = p[4] """
+                self.simbolos[id] = p[4]
         
         pass
 
-    def p_lista_id(self, p):
-        '''lista_id : ID
-                    | ID COMA lista_id
-                    | ID COLON ID COMA
-                    | ID COLON ID COMA lista_id
-                    | acceso_propiedad'''
+    def p_lista_id_norm(self, p):
+        '''lista_id_norm : ID lista_id_nrec'''
+        pass
+
+    def p_lista_id_nrec(self, p):
+        '''lista_id_nrec :
+                         | COMA ID lista_id_nrec'''
+        pass
+
+    def p_lista_identificador(self, p):
+        '''lista_id : ID lista_id_rec'''
+        
+        if len(p) == 3:
+            p[0] = [p[1]] + p[2]
+        pass
+
+    def p_lista_id_obj(self, p):
+        '''lista_id : ID COLON ID lista_id_rec
+                    | acceso_propiedad lista_id_rec'''
+        pass
+
+    def p_lista_id_rec(self, p):
+        '''lista_id_rec : 
+                        | COMA ID lista_id_rec
+                        | COMA ID COLON ID lista_id_rec
+                        | acceso_propiedad lista_id_rec'''
+        
+        if len(p) == 1:
+            p[0] = []
+        elif len(p) == 4:
+            p[0] = [p[2]] + p[3]
         pass
 
     def p_asignacion(self, p):
@@ -313,6 +343,11 @@ class ParserClass:
     # Condición
     def p_condicion(self, p):
         '''condicion : IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion'''
+
+        valor_cond = p[3]
+        if valor_cond[0] != 'bool':
+            print("ERRROR[Sem] La sentencia if requiere un booleano.")
+
         pass
 
     def p_otra_condicion(self, p):
@@ -329,6 +364,11 @@ class ParserClass:
     # Bucle
     def p_bucle(self, p):
         '''bucle : WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves'''
+        
+        valor_cond = p[3]
+        if valor_cond[0] != 'bool':
+            print("ERRROR[Sem] La sentencia if requiere un booleano.")
+
         pass
 
      # Tipo de las funciones
@@ -340,11 +380,14 @@ class ParserClass:
                 | ID'''         # ID un tanto sospechoso deberiamos mirarlo!!
         pass
 
-    # Se decide que lo que haya entre llaves no puede ser vacío.
+    # Se decide que debe haber minimo un return en el bloque de ejecuciones de la función.
 
     # Función
     def p_funcion(self, p):
-        '''funcion : FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA bloque_programa RETURN expresion SEMICOLON LLAVEC'''
+        '''funcion : FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC'''
+        tipo_fcn, tipo_rtrn = p[7], p[11]
+        print("Tipo de la función es: ", tipo_fcn)
+        print("Tipo del valor de retorno: ", tipo_rtrn)
         pass
     
     def p_lista_arg(self, p):

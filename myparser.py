@@ -87,6 +87,7 @@ class ParserClass:
     # Asignación
     def p_asignacion(self, p):
         '''asignacion : id_list EQUAL operacion'''
+        
         pass
 
     # Declaracion de un objeto
