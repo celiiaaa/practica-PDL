@@ -1,3 +1,2 @@
 /* Mi primer programa */ 
-let variable;
-variable = 10;
+a = 1 + 'c' * 2;

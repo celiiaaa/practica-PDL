@@ -64,9 +64,9 @@ class ParserClass:
     def p_expresion(self, p):
         '''expresion : binaria
                      | unaria
-                     | literal
                      | PARENTHESISOPEN expresion PARENTHESISCLOSE
                      | asg_ajson'''
+        p[0] = p[1]
         pass
 
     def p_binaria_aritmetica1(self, p):
@@ -74,8 +74,14 @@ class ParserClass:
                    | expresion MINUS expresion'''
         
         num1, op, num2 = p[1], p[2], p[3]
+        print(f"Aritmetica 1: {num1} {op} {num2}")
         # Casting
         if num1[0] != num2[0]:
+            if num1[0] == 'char':
+                num1 = ('int', ord(num2[1]))
+            if num2[0] == 'char':
+                num2 = ('int', ord(num2[1]))
+
             if num1[0] == 'float':
                 num2 = ('float', float(num2[1]))
             elif num2[0] == 'float':
@@ -91,14 +97,44 @@ class ParserClass:
             p[0] = (num1[0], num1[1] - num2[1])
 
         pass
-        
+
     def p_binaria_aritmetica2(self, p):
         '''binaria : expresion TIMES expresion
                    | expresion DIV expresion'''
+        num1, op, num2 = p[1], p[2], p[3]
+        print(f"Aritmetica 2: {num1} {op} {num2}")
+        # Casting
+        if num1[0] == 'char':
+            num1 = ('int', ord(num1[1]))
+        if num2[0] == 'char':
+            num2 = ('int', ord(num2[1]))
+
+        if num1[0] == 'float':
+            num2 = ('float', float(num2[1]))
+        elif num2[0] == 'float':
+            num1 = ('float', float(num1[1]))
+        elif num1[0] == 'int':
+            num2 = ('int', int(num2[1]))
+        elif num2[0] == 'int':
+            num1 = ('int', int(num1[1]))
+        # Operar
+        if op == '*':
+            p[0] = (num1[0], num1[1] * num2[1])
+        elif op == '/':
+            p[0] = (num1[0], num1[1] / num2[1])
+
+        pass
+
+        
+    def p_binaria_booleana1(self, p):
+        '''binaria : expresion LT expresion
+                   | expresion GT expresion
+                   | expresion LE expresion
+                   | expresion GE expresion'''
         
         num1, op, num2 = p[1], p[2], p[3]
-
-         # Casting
+        print(f"Booleana 1: {num1} {op} {num2}")
+        # Casting
         if num1[0] != num2[0]:
             if num1[0] == 'float':
                 num2 = ('float', float(num2[1]))
@@ -108,23 +144,15 @@ class ParserClass:
                 num2 = ('int', int(num2[1]))
             elif num2[0] == 'int':
                 num1 = ('int', int(num1[1]))
-            else:
-                print(f"ERROR[Sem] La operación {num1} {op} {num2} no es válida.")
         # Operar
-        if op == '*':
-            p[0] = (num1[0], num1[1] * num2[1])
-        elif op == '/':
-            p[0] = (num1[0], num1[1] / num2[1])
-            
-        pass
-        
-    def p_binaria_booleana1(self, p):
-        '''binaria : expresion LT expresion
-                   | expresion GT expresion
-                   | expresion LE expresion
-                   | expresion GE expresion'''
-        
-        num1, op, num2 = p[1], p[2], p[3]
+        if op == '<':
+            p[0] = ('bool', num1[1] < num2[1])
+        elif op == '>':
+            p[0] = ('bool', num1[1] > num2[1])
+        elif op == '<=':
+            p[0] = ('bool', num1[1] <= num2[1])
+        elif op == '>=':
+            p[0] = ('bool', num1[1] >= num2[1])
 
         pass
 
@@ -132,7 +160,24 @@ class ParserClass:
         '''binaria : expresion EQ expresion'''
 
         num1, op, num2 = p[1], p[2], p[3]
-
+        print(f"Booleana 2: {num1} {op} {num2}")
+        # Casting
+        if num1[0] != num2[0]:
+            if num1[0] == 'float':
+                num2 = ('float', float(num2[1]))
+            elif num2[0] == 'float':
+                num1 = ('float', float(num1[1]))
+            elif num1[0] == 'int':
+                num2 = ('int', int(num2[1]))
+            elif num2[0] == 'int':
+                num1 = ('int', int(num1[1]))
+            elif num1[0] == 'bool' or num2[0] == 'bool':
+                print(f"ERROR[Sem] La operacion {num1[1]} {op} {num2[1]} no es válida.")
+                pass
+        # Operar
+        if op == '==':
+            p[0] = ('bool', num1[1] == num2[1])
+        
         pass
 
     def p_binaria_conjunto(self, p):
@@ -140,6 +185,15 @@ class ParserClass:
                    | expresion DISJUNCTION expresion'''
         
         num1, op, num2 = p[1], p[2], p[3]
+        print(f"Conjunto: {num1} {op} {num2}")
+        if num1[0] != 'bool' or num2[0] != 'bool':
+            print(f"ERROR[Sem] La operacion {num1[1]} {op} {num2[1]} no es válida.")
+            pass
+        # Operar
+        if op == '&&':
+            p[0] = ('bool', num1[1] and num2[1])
+        elif op == '||':
+            p[0] = ('bool', num1[1] or num2[1])
 
         pass
 
@@ -160,10 +214,10 @@ class ParserClass:
 
         pass
 
-    # No se puede aceptar una asignacion if (char == 'a' && i = (4 + 5))
+    # No se puede aceptar una asignacion if (char == 'a' && i = (4 + 5))    // "i ="
 
-    def p_literal_identificador(self, p):
-        '''literal : ID'''
+    def p_expresion_identificador(self, p):
+        '''expresion : ID'''
         name_var = p[1]
         if name_var not in self.simbolos:
             print(f"[ERROR][Sem] Variable {name_var} no existe.")
@@ -171,45 +225,44 @@ class ParserClass:
             p[0] = self.simbolos[name_var]
         pass
 
-    def p_literal_entero(self, p):
-        '''literal : ENTERO
-                   | BIN
-                   | OCT
-                   | HEX'''
-        
+    def p_expresion_entero(self, p):
+        '''expresion : ENTERO
+                     | BIN
+                     | OCT
+                     | HEX'''
         p[0] = ('int', p[1])
+        print("Entero: ", p[0])
         pass
 
-    def p_literal_real(self, p):
-        '''literal : REAL
-                   | NCIENT'''
-        
+    def p_expresion_real(self, p):
+        '''expresion : REAL
+                     | NCIENT'''
         p[0] = ('float', p[1])
+        print("Real: ", p[0])
         pass
     
-    def p_literal_char(self, p):
-        '''literal : CHAR'''
-
+    def p_expresion_char(self, p):
+        '''expresion : CHAR'''
         p[0] = ('char', p[1])
+        print("Caracter: ", p[0])
         pass
 
-    def p_literal_bool(self, p):
-        '''literal : TR
-                   | FL'''
-        
+    def p_expresion_bool(self, p):
+        '''expresion : TR
+                     | FL'''
         p[0] = ('bool', p[1])
+        print("Booleano: ", p[0])
         pass
 
-    def p_literal_nulo(self, p):
-        '''literal : NULL'''
-
+    def p_expresion_nulo(self, p):
+        '''expresion : NULL'''
         p[0] = (None, p[1])
+        print("Nulo: ", p[0])
         pass
 
-
-    def p_literal(self, p):
-        '''literal : function_call
-                   | acceso_propiedad'''
+    def p_expresion_otra(self, p):
+        '''expresion : function_call
+                     | acceso_propiedad'''
         pass
 
     def p_acceso_propiedad(self, p):
@@ -227,15 +280,18 @@ class ParserClass:
         '''declaracion : LET lista_id
                        | LET lista_id EQUAL expresion'''
         
-        if len(p) == 3:
+        """ if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
             for id in p[2]:
-                self.simbolos[id] = (None, None)
+                if id in self.simbolos:
+                    print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
+                else:
+                    self.simbolos[id] = (None, None)
         elif len(p) == 5:
             # Verificar l
             for id in p[2]:
                 # Asignar el tipo del valor asignado a la variable.
-                self.simbolos[id] = p[4]
+                self.simbolos[id] = p[4] """
         
         pass
 
@@ -249,14 +305,6 @@ class ParserClass:
 
     def p_asignacion(self, p):
         '''asignacion : lista_id EQUAL expresion'''
-
-        if len(p) == 4:
-            name_var = p[1]
-            valor_var = p[3]
-            tipo_var = self.simbolos[name_var]
-            if tipo_var != self.get_tipo_expresion(valor_var):
-                print("ERROR[sem] Tipo incompatible en la asignación.")
-        
         pass
 
     # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
