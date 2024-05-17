@@ -46,24 +46,28 @@ class ParserClass:
                            | sentencia bloque_programa'''
         pass
 
-    # No se va a poder una sentencia de una expresion! es decir esto "1 + 2;"
-
     def p_sentencia(self, p):
-        '''sentencia : declaracion SEMICOLON
-                     | asignacion SEMICOLON
-                     | condicion
-                     | bucle 
-                     | funcion
-                     | declaracion_objeto SEMICOLON
-                     | asignacion_objeto SEMICOLON
-                     | function_call SEMICOLON'''
+        '''sentencia : especial
+                     | no_especial SEMICOLON'''
+
+    def p_especial(self, p):
+        '''especial : condicion
+                    | bucle 
+                    | funcion'''
         pass
+
+    # Ya que en JS se acepta una expresion, se implementa que también se permita aqui.
+
+    def p_no_especial(self, p):
+        '''no_especial : expresion
+                       | declaracion
+                       | asignacion
+                       | definicion_objeto'''
     
     def p_expresion(self, p):
         '''expresion : binaria
                      | unaria
-                     | PARENTHESISOPEN expresion PARENTHESISCLOSE
-                     | asg_ajson'''
+                     | PARENTHESISOPEN expresion PARENTHESISCLOSE'''
         p[0] = p[1]
         pass
 
@@ -73,6 +77,14 @@ class ParserClass:
         
         num1, op, num2 = p[1], p[2], p[3]
         print(f"Aritmetica 1: {num1} {op} {num2}")
+
+        if num1 is None:
+            print(f"[ERROR][Sem] Variable no existe.")
+            return
+        if num2 is None:
+            print(f"[ERROR][Sem] Variable no existe.")
+            return
+
         # Casting
         if num1[0] != num2[0]:
             if num1[0] == 'char':
@@ -101,6 +113,14 @@ class ParserClass:
                    | expresion DIV expresion'''
         num1, op, num2 = p[1], p[2], p[3]
         print(f"Aritmetica 2: {num1} {op} {num2}")
+
+        if num1 is None:
+            print(f"[ERROR][Sem] Variable no existe.")
+            return
+        if num2 is None:
+            print(f"[ERROR][Sem] Variable no existe.")
+            return
+
         # Casting
         if num1[0] == 'char':
             num1 = ('int', ord(num1[1]))
@@ -224,7 +244,9 @@ class ParserClass:
         '''expresion : ID'''
         name_var = p[1]
         if name_var not in self.simbolos:
-            print(f"[ERROR][Sem] Variable {name_var} no existe.")
+            column = self.find_column(p.lexer.lexdata, p.slice[1])
+            print(f"[ERROR][Sem] Variable {name_var} no existe. line: {p.lineno(1)} position: {column}")
+            p[0] = None
         else:
             p[0] = self.simbolos[name_var]
         pass
@@ -282,7 +304,7 @@ class ParserClass:
 
     def p_declaracion(self, p):
         '''declaracion : LET lista_id
-                       | LET lista_id_norm EQUAL expresion'''
+                       | LET lista_id EQUAL expresion'''
         
         if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
@@ -297,6 +319,7 @@ class ParserClass:
             for id in p[2]:
                 # Asignar el tipo del valor asignado a la variable.
                 self.simbolos[id] = p[4]
+                print(f"Declasign: {id} con valor {p[4]}")
         
         pass
 
@@ -309,22 +332,16 @@ class ParserClass:
             p[0] = [p[1]] + p[3]
         pass
 
-    def p_lista_id_norm(self, p):
-        '''lista_id_norm : ID lista_id_nrec'''
-        pass
-
-    def p_lista_id_nrec(self, p):
-        '''lista_id_nrec :
-                         | COMA ID lista_id_nrec'''
-        pass
-
-    def p_lista_id_obj(self, p):
-        '''lista_id : ID COLON ID lista_id
-                    | acceso_propiedad lista_id'''
-        pass
-
     def p_asignacion(self, p):
         '''asignacion : lista_id EQUAL expresion'''
+
+        for id in p[1]:
+            if id not in self.simbolos:
+                print(f"ERROR[Sem] La variable {id} no existe. line: {p.lexpos(1)}")
+            else:
+                self.simbolos[id] = p[3]
+                print(f"Asignacion: {id} con valor {p[3]}")
+
         pass
 
     # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
@@ -379,6 +396,8 @@ class ParserClass:
         print("Tipo de la función es: ", tipo_fcn)
         print("Tipo del valor de retorno: ", tipo_rtrn)
         pass
+
+    # La función puede no tener argumentos
     
     def p_lista_arg(self, p):
         '''lista_arg : 
@@ -394,6 +413,8 @@ class ParserClass:
         '''function_call : ID PARENTHESISOPEN lista_param PARENTHESISCLOSE'''
         pass
 
+    # Como los argumentos pueden ser vacíos, se define así
+
     def p_lista_param(self, p):
         '''lista_param : 
                        | lista_param_rec'''
@@ -404,56 +425,11 @@ class ParserClass:
                            | expresion'''
         pass
 
-    # OBJETOS AJSON.
-    def p_declaracion_objeto(self, p):
-        '''declaracion_objeto : TYPE ID EQUAL def_ajson'''
-        pass
-    
-    def p_def_ajson(self, p):
-        '''def_ajson : LLAVEA def_propiedades LLAVEC'''
-        pass
-    
-    # Puede ser que las propiedades de los objetos estén vacías
+    # OBJETOS AJSON
 
-    def p_def_propiedades(self, p):
-        '''def_propiedades : 
-                           | ID COLON valor_def_propiedad def_propiedades_rec
-                           | STRING COLON valor_def_propiedad def_propiedades_rec'''
-        pass
-        
-    def p_def_propiedades_rec(self, p):
-        '''def_propiedades_rec : COMA def_propiedades
-                               | '''
-        pass
-    
-    def p_valor_def_propiedad(self, p):
-        '''valor_def_propiedad : tipo
-                               | def_ajson'''
-        pass
+    def p_definicion_objeto(self, p):
+        '''definicion_objeto : TYPE ID COLON ID'''
 
-    def p_asignacion_objeto(self, p):
-        '''asignacion_objeto : LET ID COLON ID EQUAL asg_ajson'''
-        pass
-    
-    def p_asg_ajson(self, p):
-        '''asg_ajson : LLAVEA asg_propiedades LLAVEC''' 
-        pass
-    
-    def p_asg_propiedades(self, p):
-        '''asg_propiedades :
-                           | ID COLON valor_asg_propiedad asg_propiedades_rec
-                           | STRING COLON valor_asg_propiedad asg_propiedades_rec'''
-        pass
-    
-    def p_asg_propiedades_rec(self, p):
-        '''asg_propiedades_rec : COMA asg_propiedades
-                               | '''
-        pass
-
-    def p_valor_asg_propiedad(self, p):
-        '''valor_asg_propiedad : expresion''' 
-        pass
-        
 
 
     def find_column(self, input, token):
