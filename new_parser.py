@@ -213,7 +213,14 @@ class ParserClass:
             p[0] = (num[0], +num[1])
         elif op == '-':
             p[0] = (num[0], +num[1])
-        
+        elif op == '!':
+            if num[0] == 'bool':
+                print(num[0])
+                p[0] = (num[0], not num[1])
+                print(p[0])
+            else:
+                print(f"ERROR[Sem] Negación lógica solo es aplicable a booleanos.")
+        pass
         # NO SÉ HACER EL NEGADO!!
 
         pass
@@ -311,11 +318,16 @@ class ParserClass:
 
     def p_lista_id_norm(self, p):
         '''lista_id_norm : ID lista_id_nrec'''
+        p[0] = [p[1]] + (p[2] if p[2] else [])
         pass
 
     def p_lista_id_nrec(self, p):
         '''lista_id_nrec :
                          | COMA ID lista_id_nrec'''
+        if len(p) == 1:
+            p[0] = []
+        else:
+            p[0] = [p[2]] + (p[3] if p[3] else [])
         pass
 
     def p_lista_id_obj(self, p):
