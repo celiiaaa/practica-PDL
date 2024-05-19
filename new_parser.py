@@ -64,7 +64,11 @@ class ParserClass:
                      | unaria
                      | PARENTHESISOPEN expresion PARENTHESISCLOSE
                      | asg_ajson'''
-        p[0] = p[1]
+        
+        if p[1] == '(': # arreglo provisional 
+            p[0] = p[2]
+        else:
+            p[0] = p[1]
         pass
 
     def p_binaria_aritmetica1(self, p):
@@ -73,6 +77,10 @@ class ParserClass:
         
         num1, op, num2 = p[1], p[2], p[3]
         print(f"Aritmetica 1: {num1} {op} {num2}")
+
+        if (num1[0] == 'bool' or num2[0] == 'bool'):
+            print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
+            pass
         # Casting
         if num1[0] != num2[0]:
             if num1[0] == 'char':
@@ -100,7 +108,11 @@ class ParserClass:
         '''binaria : expresion TIMES expresion
                    | expresion DIV expresion'''
         num1, op, num2 = p[1], p[2], p[3]
+        print(num2)
         print(f"Aritmetica 2: {num1} {op} {num2}")
+        
+        
+
         # Casting
         if num1[0] == 'char':
             num1 = ('int', ord(num1[1]))
@@ -133,6 +145,8 @@ class ParserClass:
         
         num1, op, num2 = p[1], p[2], p[3]
         print(f"Booleana 1: {num1} {op} {num2}")
+
+        
         # Casting
         if num1[0] == 'char':
             num1 = ('int', ord(num1[1]))
@@ -337,6 +351,17 @@ class ParserClass:
 
     def p_asignacion(self, p):
         '''asignacion : lista_id EQUAL expresion'''
+        var_name = p[1]
+        value = p[3]
+
+        for id in var_name:
+            if id in self.simbolos:
+                self.simbolos[id] = value
+            else:
+                print(f"ERROR[Sem] La variable '{var_name}' no ha sido declarada.")
+        
+        print(f"Asignación: {var_name} = {value}")
+
         pass
 
     # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
