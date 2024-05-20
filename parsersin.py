@@ -12,7 +12,7 @@ class ParserClass:
         self.parser = yacc.yacc(module=self)
         self.contenido = None
         self.simbolos = {}          # Tabla de símbolos
-        self.registr = {}           # Tabla de registro
+        self.registro = {}           # Tabla de registro
 
     start = 'axioma'
 
@@ -68,7 +68,10 @@ class ParserClass:
         '''expresion : binaria
                      | unaria
                      | PARENTHESISOPEN expresion PARENTHESISCLOSE'''
-        p[0] = p[1]
+        if len(p) == 4:
+            p[0] = p[2]
+        else:
+            p[0] = p[1]
         pass
 
     def p_binaria_aritmetica1(self, p):
@@ -84,14 +87,16 @@ class ParserClass:
         if num2 is None:
             print(f"[ERROR][Sem] Variable no existe.")
             return
-
-        # Casting
+        
         if num1[0] != num2[0]:
             if num1[0] == 'char':
                 num1 = ('int', ord(num2[1]))
             if num2[0] == 'char':
                 num2 = ('int', ord(num2[1]))
+            if num1[0] == 'bool' or num2[0] == 'bool':
+                print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
 
+        # Casting
             if num1[0] == 'float':
                 num2 = ('float', float(num2[1]))
             elif num2[0] == 'float':
@@ -103,8 +108,10 @@ class ParserClass:
         # Operar
         if op == '+':
             p[0] = (num1[0], num1[1] + num2[1])
+            print(f"Valor: {p[0]}")
         elif op == '-':
             p[0] = (num1[0], num1[1] - num2[1])
+            print(f"Valor: {p[0]}")
 
         pass
 
@@ -121,22 +128,24 @@ class ParserClass:
             print(f"[ERROR][Sem] Variable no existe.")
             return
 
-        # Casting
-        if num1[0] == 'char':
-            num1 = ('int', ord(num1[1]))
-        if num2[0] == 'char':
-            num2 = ('int', ord(num2[1]))
-        if num1[0] == 'bool' or num2[0] == 'bool':
-            print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
+        if num1[0] != num2[0]:
+            # Casting
+            if num1[0] == 'char':
+                num1 = ('int', ord(num1[1]))
+            if num2[0] == 'char':
+                num2 = ('int', ord(num2[1]))
+            if num1[0] == 'bool' or num2[0] == 'bool':
+                print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
 
-        if num1[0] == 'float':
-            num2 = ('float', float(num2[1]))
-        elif num2[0] == 'float':
-            num1 = ('float', float(num1[1]))
-        elif num1[0] == 'int':
-            num2 = ('int', int(num2[1]))
-        elif num2[0] == 'int':
-            num1 = ('int', int(num1[1]))
+            if num1[0] == 'float':
+                num2 = ('float', float(num2[1]))
+            elif num2[0] == 'float':
+                num1 = ('float', float(num1[1]))
+            elif num1[0] == 'int':
+                num2 = ('int', int(num2[1]))
+            elif num2[0] == 'int':
+                num1 = ('int', int(num1[1]))
+        
         # Operar
         if op == '*':
             p[0] = (num1[0], num1[1] * num2[1])
