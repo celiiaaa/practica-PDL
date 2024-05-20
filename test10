@@ -1,0 +1,27 @@
+/* Mi primer programa */ 
+let a, b;
+a = 1 + 2 * 2;
+c = 'c';
+
+let c;
+let c;
+
+c = 'k';
+
+let variable, variable2 = 2 + 'c';
+
+let variable3 = variable + variable2;
+let variable4 = variable3 < 200;
+let variable5 = 'a' == 'a';
+let variable6 = !variable5 == fl; // ('bool', False) == ('bool', 'fl') --> Esto da False, deberíamos tener en cuenta el resultado concreto de las operaiones o solo basta con que el tipo sea correcto?
+let variable7 = variable6 && variable5; 
+
+let err1 = 5.0  * ((2 < 8) + ('s' >= 'a')); // por alguna razón esto da --> Aritmetica 2: ('float', 5.0) * ('bool', 2), pero detecta bien el error idk
+
+// let var12 = (2+3+4+5) + ('a' + 'b' + 'c' + 'd') * 12; // si se suman varios caracteres cual deberia ser el resultado? 'abcd' desde luego que no, pero tampoco puede ser un entero.
+
+let var12;
+let f1 = 7 + 'c' * 8; // esto se puede hacer
+let f2 = ('c' * 'c') / 2; // ERROR[Sem] Operadores no válidos encontrados en operación aritmética: None / 2
+
+
