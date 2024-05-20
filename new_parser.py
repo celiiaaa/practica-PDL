@@ -44,6 +44,10 @@ class ParserClass:
     def p_bloque_programa(self, p):
         '''bloque_programa : sentencia
                            | sentencia bloque_programa'''
+        if len(p) == 2:
+            p[0] = [p[1]]  # Una sola sentencia
+        else:
+            p[0] = [p[1]] + p[2]  # Varias sentencias
         pass
 
     # No se va a poder una sentencia de una expresion! es decir esto "1 + 2;"
@@ -57,6 +61,8 @@ class ParserClass:
                      | declaracion_objeto SEMICOLON
                      | asignacion_objeto SEMICOLON
                      | function_call SEMICOLON'''
+        
+        p[0] = p[1]
         pass
     
     def p_expresion(self, p):
@@ -111,8 +117,13 @@ class ParserClass:
         print(num2)
         print(f"Aritmetica 2: {num1} {op} {num2}")
         
+        # Verificar que ambos operandos sean números o caracteres válidos para multiplicación/división
+        if (num1[0] not in ['int', 'float', 'char'] or num2[0] not in ['int', 'float', 'char']) or \
+        (num1[0] == 'char' and num2[0] == 'char'):
+            print(f"ERROR[Sem] Operadores no válidos encontrados en operación aritmética: {num1[1]} {op} {num2[1]}")
+            p[0] = ('error', None)
+            
         
-
         # Casting
         if num1[0] == 'char':
             num1 = ('int', ord(num1[1]))
@@ -361,7 +372,7 @@ class ParserClass:
                 print(f"ERROR[Sem] La variable '{var_name}' no ha sido declarada.")
         
         print(f"Asignación: {var_name} = {value}")
-
+        
         pass
 
     # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
@@ -374,18 +385,29 @@ class ParserClass:
         valor_cond = p[3]
         if valor_cond[0] != 'bool':
             print("ERRROR[Sem] La sentencia if requiere un booleano.")
-
+        if valor_cond[1]:  # Si la condición es verdadera
+            p[0] = p[5]  # Ejecuta el bloque dentro de las llaves
+        else:
+            if p[6] is not None:
+                p[0] = p[6]  # Ejecuta el bloque del else si existe
+            else:
+                p[0] = None  # No hay else, nada que ejecutar
         pass
 
     def p_otra_condicion(self, p):
         '''otra_condicion : 
                           | ELSE bloque_llaves'''
+        if len(p) > 1:
+            p[0] = p[2]  # Si existe el bloque else, se asigna
+        else:
+            p[0] = None  # No hay bloque else
         pass
 
     # Se decide que lo que haya entre llaves no puede ser vacío.
 
     def p_bloque_llaves(self, p):
         '''bloque_llaves : LLAVEA bloque_programa LLAVEC'''
+        p[0] = p[2] 
         pass
 
     # Bucle
@@ -501,7 +523,8 @@ class ParserClass:
         if p:
             print(f"[Syntax Error] At value {p.value} at line {p.lineno} at column {self.find_column(p.lexer.lexdata, p)}")
         else:
-            print(f"[Syntax Error] EOF at line {p.lineno}")
+            print(f"[Syntax Error] EOF") # si p es None entonces no puedes acceder a la linea
+            # print(f"[Syntax Error] EOF at line {p.lineno}")
    
     def test(self, data):
         self.parser.parse(data)
