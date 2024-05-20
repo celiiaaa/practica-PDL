@@ -61,7 +61,7 @@ class ParserClass:
                      | declaracion_objeto SEMICOLON
                      | asignacion_objeto SEMICOLON
                      | function_call SEMICOLON'''
-        
+        print("sentencia: ", p[1])
         p[0] = p[1]
         pass
     
@@ -237,7 +237,7 @@ class ParserClass:
         if op == '+':
             p[0] = (num[0], +num[1])
         elif op == '-':
-            p[0] = (num[0], +num[1])
+            p[0] = (num[0], -num[1])
         elif op == '!':
             if num[0] == 'bool':
                 print(num[0])
@@ -324,12 +324,13 @@ class ParserClass:
                 else:
                     self.simbolos[id] = (None, None)
                     print(f"Declaracion: {id}")
+            p[0] = ('declaracion', p[2])
         elif len(p) == 5:
             # Verificar l
             for id in p[2]:
                 # Asignar el tipo del valor asignado a la variable.
                 self.simbolos[id] = p[4]
-        
+            p[0] = ('declaracion_asignacion', p[2], p[4])
         pass
 
     def p_lista_id(self, p):
@@ -372,7 +373,7 @@ class ParserClass:
                 print(f"ERROR[Sem] La variable '{var_name}' no ha sido declarada.")
         
         print(f"Asignación: {var_name} = {value}")
-        
+        p[0] = ('asignacion', var_name, value)
         pass
 
     # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
@@ -387,6 +388,7 @@ class ParserClass:
             print("ERRROR[Sem] La sentencia if requiere un booleano.")
         if valor_cond[1]:  # Si la condición es verdadera
             p[0] = p[5]  # Ejecuta el bloque dentro de las llaves
+            print(p[5])
         else:
             if p[6] is not None:
                 p[0] = p[6]  # Ejecuta el bloque del else si existe
