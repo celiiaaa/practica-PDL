@@ -93,7 +93,7 @@ class ParserClass:
                        | asignacion
                        | definicion_objeto'''
         p[0] = p[1]
-        print("Sentencia no especial: ", p[0])
+        # print("Sentencia no especial: ", p[0])
 
         pass
     
@@ -106,7 +106,7 @@ class ParserClass:
         else:
             p[0] = p[1]
 
-        print("Expresión: ", p[0])
+        # print("Expresión: ", p[0])
         pass
 
     def p_binaria_aritmetica1(self, p):
@@ -146,10 +146,8 @@ class ParserClass:
         # Operar
         if op == '+':
             p[0] = (num1[0], num1[1] + num2[1])
-            print(f"Valor: {p[0]}")
         elif op == '-':
             p[0] = (num1[0], num1[1] - num2[1])
-            print(f"Valor: {p[0]}")
 
         pass
 
@@ -159,18 +157,18 @@ class ParserClass:
         num1, op, num2 = p[1], p[2], p[3]
         print(f"Aritmetica 2: {num1} {op} {num2}")
 
-        # JUSTIFICAR QUE NO SE PUEDEN MULTIPLICAR DOS CHAR
-        
-        if (num1[0] not in ['int', 'float', 'char'] or num2[0] not in ['int', 'float', 'char']) or (num1[0] == 'char' and num2[0] == 'char'):
-            print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
-            return 
-
         if num1 is None:
             print(f"[ERROR][Sem] Variable no existe.")
             return
         if num2 is None:
             print(f"[ERROR][Sem] Variable no existe.")
             return
+        
+         # JUSTIFICAR QUE NO SE PUEDEN MULTIPLICAR DOS CHAR
+        
+        if (num1[0] not in ['int', 'float', 'char'] or num2[0] not in ['int', 'float', 'char']) or (num1[0] == 'char' and num2[0] == 'char'):
+            print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
+            return 
         
         if num1[0] == 'char':
             num1 = ('int', ord(num1[1]))
@@ -330,9 +328,9 @@ class ParserClass:
         '''expresion : TR
                      | FL'''
         if p[1] == 'tr':
-            p[0] = ('bool', True)
+            p[0] = ('bool', p[1])
         elif p[1] == 'fl':
-            p[0] = ('bool', False)
+            p[0] = ('bool', p[1])
         print("Booleano: ", p[0])
         pass
 
