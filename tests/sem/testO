@@ -1,0 +1,32 @@
+// TEST PARA LOS OBJETOS AJSON
+
+// Creación de un objeto vacío
+type Vacio = { };
+
+// Redeclaración de un objeto vacío
+type Vacio = { propiedad : int, };
+
+// Creación de un objeto AJSON
+type Ojeto = { prop1 : character, prop2 : int, prop3 : boolean, };
+type Cesta = { "cantidad" : int, otro : character };
+
+type Tarea = { id : int, nombre : character, completada : boolean, };
+type ListaTareas = { cantidad : int, "tarea1" : Tarea, "tarea2" : Tarea, "tarea3" : Tarea, };
+
+// Creación de un objeto concatenado
+type Pais = { nombre : character, capital : character, 
+    dinero : { moneda : character, cantidad : int, }, 
+    idiomas : { "idioma1" : character, "idioma2" : character, },
+    "vacio" : { },
+};
+
+// Creación de un objeto que no existe
+type Error = { mensaje : noExiste, };
+type Respuesta = { "error" : Error, "resultado" : character, };
+
+// Creación de un objeto con el mismo nombre que una variable
+let VAR;
+type VAR = { prop1 : int, }; 
+
+// Creación de un objeto 
+

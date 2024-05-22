@@ -19,7 +19,8 @@ class ParserClass:
     precedence = (
         ('left', 'DISJUNCTION'),
         ('left', 'CONJUNCTION'),
-        ('nonassoc', 'EQ', 'LT', 'GT', 'LE', 'GE'),
+        ('nonassoc', 'EQ'),
+        ('nonassoc', 'LT', 'GT', 'LE', 'GE'),
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIV'),
         ('right', 'UPLUS', 'UMINUS'),
@@ -47,56 +48,27 @@ class ParserClass:
         '''bloque_programa : sentencia
                            | sentencia bloque_programa'''
         # print("Bloque programa: ", p[1])
-        if len(p) == 2:
-            p[0] = p[1]  # Una sola sentencia
+        """ if len(p) == 2:
+            p[0] = p[1]
         else:
-            p[0] = p[1] + p[2]  # Varias sentencias
+            p[0] = p[1] + p[2] """
         pass
 
-
     def p_sentencia(self, p):
-        '''sentencia : especial
-                     | no_especial SEMICOLON'''
+        '''sentencia : declaracion SEMICOLON
+                     | asignacion SEMICOLON
+                     | condicion
+                     | bucle 
+                     | funcion
+                     | declaracion_objeto SEMICOLON
+                     | asignacion_objeto SEMICOLON
+                     | function_call SEMICOLON'''
         p[0] = p[1]
         # print("Sentencia: ", p[0])
         pass
 
-    def p_especial(self, p):
-        '''especial : bucle 
-                    | funcion'''
-        p[0] = p[1]
-        # print("Sentencia especial: ", p[0])
-        pass
-
-    def p_especial(self, p):
-        '''especial : condicion'''
-        cond, true, false = p[1][1], p[1][2], p[1][3]
-        print("COND: ", cond)
-        print("TRUE: ", true)
-        print("FALSE: ", false)
-        if (cond) :
-            print("TRUE!!")
-            p[0] = true
-        else :
-            print("FALSE!!")
-            p[0] = false
-
-        p[0] = p[1]
-        print("CONDICION: ", p[0])
-        pass
-
     # Ya que en JS se acepta una expresion, se implementa que también se permita aqui.
 
-    def p_no_especial(self, p):
-        '''no_especial : expresion
-                       | declaracion
-                       | asignacion
-                       | definicion_objeto'''
-        p[0] = p[1]
-        # print("Sentencia no especial: ", p[0])
-
-        pass
-    
     def p_expresion(self, p):
         '''expresion : binaria
                      | unaria
@@ -164,7 +136,7 @@ class ParserClass:
             print(f"[ERROR][Sem] Variable no existe.")
             return
         
-         # JUSTIFICAR QUE NO SE PUEDEN MULTIPLICAR DOS CHAR
+        # JUSTIFICAR QUE NO SE PUEDEN MULTIPLICAR DOS CHAR
         
         if (num1[0] not in ['int', 'float', 'char'] or num2[0] not in ['int', 'float', 'char']) or (num1[0] == 'char' and num2[0] == 'char'):
             print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
@@ -308,20 +280,17 @@ class ParserClass:
                      | OCT
                      | HEX'''
         p[0] = ('int', p[1])
-        print("Entero: ", p[0])
         pass
 
     def p_expresion_real(self, p):
         '''expresion : REAL
                      | NCIENT'''
         p[0] = ('float', p[1])
-        print("Real: ", p[0])
         pass
     
     def p_expresion_char(self, p):
         '''expresion : CHAR'''
         p[0] = ('char', p[1])
-        print("Caracter: ", p[0])
         pass
 
     def p_expresion_bool(self, p):
@@ -331,18 +300,17 @@ class ParserClass:
             p[0] = ('bool', p[1])
         elif p[1] == 'fl':
             p[0] = ('bool', p[1])
-        print("Booleano: ", p[0])
         pass
 
     def p_expresion_nulo(self, p):
         '''expresion : NULL'''
         p[0] = (None, None)
-        print("Nulo: ", p[0])
         pass
 
     def p_expresion_otra(self, p):
         '''expresion : function_call
-                     | acceso_propiedad'''
+                     | acceso_propiedad
+                     | objeto_asg'''
         pass
 
     def p_acceso_propiedad(self, p):
@@ -363,7 +331,7 @@ class ParserClass:
         if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
             for id in p[2]:
-                if id in self.simbolos:
+                if id in self.simbolos or id in self.registro:
                     print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
                 else:
                     self.simbolos[id] = (None, None)
@@ -449,6 +417,8 @@ class ParserClass:
         if valor_cond[0] != 'bool':
             print("ERRROR[Sem] La sentencia if requiere un booleano.")
 
+        p[0] = ('while', p[3], p[5])
+
         pass
 
      # Tipo de las funciones
@@ -456,18 +426,36 @@ class ParserClass:
         '''tipo : INT
                 | FLOAT
                 | CHARACTER
-                | BOOLEAN
-                | ID'''         # ID un tanto sospechoso deberiamos mirarlo!!
+                | BOOLEAN'''
+        p[0] = p[1]
+        print("Tipo: ", p[0])
+
         pass
 
-    # Se decide que debe haber minimo un return en el bloque de ejecuciones de la función.
+    """ def p_tipo_objeto(self, p):
+        '''tipo : ID'''
+        if self.registro.get(p[1]) is None:
+            print(f"ERROR[Sem] El objeto {p[1]} no existe.")
+            p[0] = -1
+        else:
+            p[0] = self.registro[p[1]]
+        print("Tipo obj: ", p[0])
+        pass """
+
+    # DEBE haber minimo un return en el bloque de ejecuciones de la función.
 
     # Función
     def p_funcion(self, p):
         '''funcion : FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC'''
-        tipo_fcn, tipo_rtrn = p[7], p[11]
+        tipo_fcn, tipo_rtrn = p[7], p[11][0]
         print("Tipo de la función es: ", tipo_fcn)
         print("Tipo del valor de retorno: ", tipo_rtrn)
+
+        if tipo_fcn != tipo_rtrn:
+            print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
+
+        p[0] = ('funcion', p[2], p[4], p[7], p[11])
+
         pass
 
     # La función puede no tener argumentos
@@ -500,9 +488,161 @@ class ParserClass:
 
     # OBJETOS AJSON
 
-    def p_definicion_objeto(self, p):
-        '''definicion_objeto : TYPE ID COLON ID'''
+    def p_declaracion_objeto(self, p):
+        '''declaracion_objeto : TYPE ID EQUAL objeto_dec'''
+        
+        if p[2] in self.registro:
+            print(f"ERROR[Sem] El objeto {p[2]} ya existe.")
+            return
+        if p[2] in self.simbolos:
+            print(f"ERROR[Sem] La re-declaración de la variable {p[2]} no está permitida.")
+            return
+        
+        if len(p) == 5:
+            if p[4] == []:
+                self.registro[p[2]] = {}
+                print(f"Declaracion de objeto: {p[2]} con propiedades vacías.")
+            elif p[4][0] != -1:
+                self.registro[p[2]] = p[4]
+                print(f"Declaracion de objeto: {p[2]} con propiedades {p[4]}")
         pass
+
+    def p_objeto_dec(self, p):
+        '''objeto_dec : LLAVEA propiedades_dec LLAVEC'''
+        p[0] = p[2]
+        pass
+
+    def p_propiedades_dec(self, p):
+        '''propiedades_dec : 
+                           | propiedad_dec
+                           | propiedad_dec COMA propiedades_dec'''
+        if len(p) == 1:
+            p[0] = []
+        elif len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1]] + p[3]
+        pass
+
+    def p_propiedad_dec(self, p):
+        '''propiedad_dec : ID COLON tipo
+                         | STRING COLON tipo'''
+        if p[3] == -1:
+            p[0] = -1
+        else:
+            p[0] = {p[1]: (p[3], None)}
+        pass
+
+    def p_propiedad_dec2(self, p):
+        '''propiedad_dec : ID COLON ID
+                         | STRING COLON ID'''
+        if self.registro.get(p[3]) is None:
+            print(f"ERROR[Sem] El objeto {p[3]} no existe.")
+            p[0] = -1
+        else:
+            p[0] = {p[1]: (p[3], self.registro.get(p[3]))}
+        
+        pass
+
+    def p_propeidad_dec3(self, p):
+        '''propiedad_dec : ID COLON objeto_dec
+                         | STRING COLON objeto_dec'''
+        p[0] = {p[1]: (p[3], p[5])}
+
+        pass
+
+    def p_asignacion_objeto(self, p):
+        '''asignacion_objeto : LET ID COLON ID
+                             | LET ID COLON ID EQUAL objeto_asg'''
+        pass
+
+    def p_objeto_asg(self, p):
+        '''objeto_asg : LLAVEA propiedades_asg LLAVEC'''
+        pass
+
+    def p_propiedades_asg(self, p):
+        '''propiedades_asg : 
+                           | propiedad_asg
+                           | propiedad_asg COMA propiedades_asg'''
+        pass
+
+    def p_propiedad_asg(self, p):
+        '''propiedad_asg : ID COLON expresion
+                         | STRING COLON expresion'''
+        pass
+
+
+
+    # EVALUAR LA LÓGICA INTERNA – EXTRA ---------------------------
+
+    # Evaluar expresiones
+    def evaluate_expression(self, expression):
+        if isinstance(expression, tuple):
+            if expression[0] == 'binary':
+                return self.evaluate_binary_expression(expression)
+            elif expression[0] == 'unary':
+                return self.evaluate_unary_expression(expression)
+            elif expression[0] == 'literal':
+                return expression[1]
+            elif expression[0] == 'object':
+                return expression[1]
+            elif expression[0] == 'call':
+                return self.evaluate_function_call(expression)
+        elif isinstance(expression, str):
+            return self.simbolos.get(expression, None)
+        return expression
+
+    # Evaluar cada sentencia
+    def evaluate_statement(self, statement):
+        if statement[0] == 'if':
+            self.evaluate_if(statement)
+        elif statement[0] == 'if_else':
+            self.evaluate_if_else(statement)
+        elif statement[0] == 'while':
+            self.evaluate_while(statement)
+
+        """
+        elif statement[0] == 'block':
+            for stmt in statement[1]:
+                evaluate_statement(stmt)
+        elif statement[0] == 'declaration':
+            pass  # Las declaraciones ya se manejan en p_declaration
+        elif statement[0] == 'assignment':
+            pass  # Las asignaciones ya se manejan en p_assignment
+        elif statement[0] == 'return':
+            pass  # El manejo del retorno se puede hacer aquí si es necesario
+        elif statement[0] == 'expression':
+            evaluate_expression(statement[1])
+        """
+    
+    # Evaluar condicional if
+    def evaluate_if(self, statement):
+        condition, block = statement
+        if self.evaluate_expression(condition):
+            self.evaluate_statement(block)
+
+    # Evaluar condicional if-else
+    def evaluate_if_else(self ,statement):
+        condition, if_block, else_block = statement
+        if self.evaluate_expression(condition):
+            self.evaluate_statement(if_block)
+        else:
+            self.evaluate_statement(else_block)
+
+    # Evaluar bucle while
+    def evaluate_while(self, statement):
+        condition, block = statement
+        while self.evaluate_expression(condition):
+            self.evaluate_statement(block)
+
+
+
+    # ---------------------------------------------------------------
+
+    def print_registro(self):
+        print("Registro: ")
+        for key, value in self.registro.items():
+            print(f"\t{key} : {value}")
 
     def find_column(self, input, token):
         line_start = input.rfind('\n', 0, token.lexpos) + 1

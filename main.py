@@ -10,6 +10,8 @@ def analisis_sintactico(input_file):
     parser = ParserClass()
     parser.test_with_files(input_file)
 
+    parser.print_registro()
+
 def main():
     
     if sys.argv[2] == "-lex":
