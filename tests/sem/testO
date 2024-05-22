@@ -13,11 +13,11 @@ type Cesta = { "cantidad" : int, otro : character };
 type Tarea = { id : int, nombre : character, completada : boolean, };
 type ListaTareas = { cantidad : int, "tarea1" : Tarea, "tarea2" : Tarea, "tarea3" : Tarea, };
 
-// Creación de un objeto concatenado
+// Creación de un objeto anidado
+type Idioma = { nombre : character, hablantes : int };
 type Pais = { nombre : character, capital : character, 
     dinero : { moneda : character, cantidad : int, }, 
-    idiomas : { "idioma1" : character, "idioma2" : character, },
-    "vacio" : { },
+    idiomas : { "idioma1" : Idioma, "idioma2" : Idioma, },
 };
 
 // Creación de un objeto que no existe

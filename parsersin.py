@@ -547,7 +547,7 @@ class ParserClass:
     def p_propeidad_dec3(self, p):
         '''propiedad_dec : ID COLON objeto_dec
                          | STRING COLON objeto_dec'''
-        p[0] = {p[1]: (p[3], p[5])}
+        p[0] = {p[1]: (p[3])}
 
         pass
 
