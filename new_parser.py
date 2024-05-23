@@ -365,7 +365,7 @@ class ParserClass:
         '''asignacion : lista_id EQUAL expresion'''
         var_name = p[1]
         value = p[3]
-
+        
         for id in var_name:
             if id in self.simbolos:
                 self.simbolos[id] = value

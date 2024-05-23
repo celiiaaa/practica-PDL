@@ -13,6 +13,7 @@ class ParserClass:
         self.contenido = None
         self.simbolos = {}          # Tabla de símbolos
         self.registro = {}          # Tabla de registro
+        self.local_symbols = {}     # Tabla de símbolos local para funciones
 
     start = 'axioma'
 
@@ -87,7 +88,7 @@ class ParserClass:
         
         num1, op, num2 = p[1], p[2], p[3]
         print(f"Aritmetica 1: {num1} {op} {num2}")
-
+        
         if num1 is None:
             print(f"[ERROR][Sem] Variable no existe.")
             return
@@ -99,10 +100,11 @@ class ParserClass:
             print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
             return
         
+        
         # JUSTIFICAR SUMAR LOS CHAR
-        if num1[0] == 'char':
+        if num1[0] == 'char' or num1[0] == 'character':
             num1 = ('int', ord(num2[1]))
-        if num2[0] == 'char':
+        if num2[0] == 'char' or num2[0] == 'character':
             num2 = ('int', ord(num2[1]))
         
         if num1[0] != num2[0]:
@@ -118,6 +120,7 @@ class ParserClass:
         # Operar
         if op == '+':
             p[0] = (num1[0], num1[1] + num2[1])
+            print(f"Resultado: {p[0]}")
         elif op == '-':
             p[0] = (num1[0], num1[1] - num2[1])
 
@@ -179,7 +182,7 @@ class ParserClass:
         if num1[0] == 'char':
             num1 = ('int', ord(num1[1]))
         if num2[0] == 'char':
-            num2 = ('int', ord(num2[1]))
+            num2 = ('int', ord(num2[1])) 
 
         if num1[0] != num2[0]:
             if num1[0] == 'float':
@@ -206,6 +209,7 @@ class ParserClass:
         '''binaria : expresion EQ expresion'''
 
         num1, op, num2 = p[1], p[2], p[3]
+        print
         print(f"Booleana 2: {num1} {op} {num2}")
         # Casting
         if num1[0] != num2[0]:
@@ -266,12 +270,15 @@ class ParserClass:
     def p_expresion_identificador(self, p):
         '''expresion : ID'''
         name_var = p[1]
-        if name_var not in self.simbolos:
+        print(f"Identificador: {name_var}")
+        print(f"Locales: {self.local_symbols}")
+        if name_var not in self.simbolos and name_var not in self.local_symbols:
             column = self.find_column(p.lexer.lexdata, p.slice[1])
             print(f"[ERROR][Sem] Variable {name_var} no existe. line: {p.lineno(1)} position: {column}")
             p[0] = None
         else:
-            p[0] = self.simbolos[name_var]
+            p[0] = self.simbolos.get(name_var, self.local_symbols.get(name_var))
+            print(f"Valor de la variable {name_var}: {p[0]}")
         pass
 
     def p_expresion_entero(self, p):
@@ -296,10 +303,7 @@ class ParserClass:
     def p_expresion_bool(self, p):
         '''expresion : TR
                      | FL'''
-        if p[1] == 'tr':
-            p[0] = ('bool', p[1])
-        elif p[1] == 'fl':
-            p[0] = ('bool', p[1])
+        p[0] = ('bool', p[1])
         pass
 
     def p_expresion_nulo(self, p):
@@ -327,7 +331,7 @@ class ParserClass:
     def p_declaracion(self, p):
         '''declaracion : LET lista_id
                        | LET lista_id EQUAL expresion'''
-        
+
         if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
             for id in p[2]:
@@ -447,13 +451,14 @@ class ParserClass:
     # Función
     def p_funcion(self, p):
         '''funcion : FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC'''
-        tipo_fcn, tipo_rtrn = p[7], p[11][0]
-        print("Tipo de la función es: ", tipo_fcn)
-        print("Tipo del valor de retorno: ", tipo_rtrn)
-
-        if tipo_fcn != tipo_rtrn:
+        # Guardar los parámetros en la tabla de símbolos local
+        
+        return_type, return_expr = p[7], p[11][0]
+        print(f"Funcion: {p[2]} con tipo {return_type} y retorno {return_expr}")
+        if return_type != return_expr:
             print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
-
+        
+        self.local_symbols = {}
         p[0] = ('funcion', p[2], p[4], p[7], p[11])
 
         pass
@@ -463,11 +468,32 @@ class ParserClass:
     def p_lista_arg(self, p):
         '''lista_arg : 
                      | lista_arg_rec'''
+        if len(p) == 1:
+            p[0] = []
+        else:
+            p[0] = p[1]
+            for id in p[1]:           
+                if id in self.local_symbols:
+                    print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
+                else:
+                    if id[1] == 'int':
+                        self.local_symbols[id[0]] = (id[1], 0)
+                    elif id[1] == 'float':
+                        self.local_symbols[id[0]] = (id[1], 0.0)
+                    elif id[1] == 'character':
+                        self.local_symbols[id[0]] = (id[1], '0')
+                    elif id[1] == 'boolean':
+                        self.local_symbols[id[0]] = (id[1], False)
+                    
         pass
 
     def p_lista_arg_rec(self, p):
         '''lista_arg_rec : ID COLON tipo
                          | ID COLON tipo COMA lista_arg_rec'''
+        if len(p) == 4:
+            p[0] = [(p[1], p[3])]
+        else:
+            p[0] = [(p[1], p[3])] + p[5]
         pass
     
     def p_function_call(self, p):
