@@ -628,11 +628,13 @@ class ParserClass:
                 if value[0] != propiedades[i][key]:
                     print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el del objeto {obj_name}.")
                     return
-        
+                
+        # Asignar las propiedades al objeto
+        self.simbolos[var_name] = (obj_name, lista_valores)
         # Asignar los valores al objeto
-        for i in range(len(lista_valores)):
+        """ for i in range(len(lista_valores)):
             for key, value in lista_valores[i].items():
-                self.simbolos[var_name][i][key] = value
+                self.simbolos[var_name][i][key] = value """
 
         print(f"Asignacion de objeto {var_name} con valores {self.simbolos[var_name]}")
 
@@ -728,6 +730,11 @@ class ParserClass:
 
 
     # ---------------------------------------------------------------
+
+    def print_simbolos(self):
+        print("Simbolos: ")
+        for key, value in self.simbolos.items():
+            print(f"\t{key} : {value}")
 
     def print_registro(self):
         print("Registro: ")

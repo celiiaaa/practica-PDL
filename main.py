@@ -10,6 +10,7 @@ def analisis_sintactico(input_file):
     parser = ParserClass()
     parser.test_with_files(input_file)
 
+    parser.print_simbolos()
     parser.print_registro()
 
 def main():
