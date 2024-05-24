@@ -67,35 +67,33 @@ Rule 61    tipo -> INT
 Rule 62    tipo -> FLOAT
 Rule 63    tipo -> CHARACTER
 Rule 64    tipo -> BOOLEAN
-Rule 65    funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
-Rule 66    lista_arg -> <empty>
-Rule 67    lista_arg -> lista_arg_rec
-Rule 68    lista_arg_rec -> ID COLON tipo
-Rule 69    lista_arg_rec -> ID COLON tipo COMA lista_arg_rec
-Rule 70    function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
-Rule 71    lista_param -> <empty>
-Rule 72    lista_param -> lista_param_rec
-Rule 73    lista_param_rec -> expresion COMA lista_param_rec
-Rule 74    lista_param_rec -> expresion
-Rule 75    declaracion_objeto -> TYPE ID EQUAL objeto_dec
-Rule 76    objeto_dec -> LLAVEA propiedades_dec LLAVEC
-Rule 77    propiedades_dec -> <empty>
-Rule 78    propiedades_dec -> propiedad_dec
-Rule 79    propiedades_dec -> propiedad_dec COMA propiedades_dec
-Rule 80    propiedad_dec -> ID COLON tipo
-Rule 81    propiedad_dec -> STRING COLON tipo
-Rule 82    propiedad_dec -> ID COLON ID
-Rule 83    propiedad_dec -> STRING COLON ID
-Rule 84    propiedad_dec -> ID COLON objeto_dec
-Rule 85    propiedad_dec -> STRING COLON objeto_dec
-Rule 86    asignacion_objeto -> LET ID COLON ID
-Rule 87    asignacion_objeto -> LET ID COLON ID EQUAL objeto_asg
-Rule 88    objeto_asg -> LLAVEA propiedades_asg LLAVEC
-Rule 89    propiedades_asg -> <empty>
-Rule 90    propiedades_asg -> propiedad_asg
-Rule 91    propiedades_asg -> propiedad_asg COMA propiedades_asg
-Rule 92    propiedad_asg -> ID COLON expresion
-Rule 93    propiedad_asg -> STRING COLON expresion
+Rule 65    tipo -> ID
+Rule 66    funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+Rule 67    lista_arg -> <empty>
+Rule 68    lista_arg -> lista_arg_rec
+Rule 69    lista_arg_rec -> ID COLON tipo
+Rule 70    lista_arg_rec -> ID COLON tipo COMA lista_arg_rec
+Rule 71    function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+Rule 72    lista_param -> <empty>
+Rule 73    lista_param -> lista_param_rec
+Rule 74    lista_param_rec -> expresion COMA lista_param_rec
+Rule 75    lista_param_rec -> expresion
+Rule 76    declaracion_objeto -> TYPE ID EQUAL objeto_dec
+Rule 77    objeto_dec -> LLAVEA propiedades_dec LLAVEC
+Rule 78    propiedades_dec -> <empty>
+Rule 79    propiedades_dec -> propiedad_dec
+Rule 80    propiedades_dec -> propiedad_dec COMA propiedades_dec
+Rule 81    propiedad_dec -> ID COLON tipo
+Rule 82    propiedad_dec -> STRING COLON tipo
+Rule 83    propiedad_dec -> ID COLON objeto_dec
+Rule 84    propiedad_dec -> STRING COLON objeto_dec
+Rule 85    asignacion_objeto -> LET ID COLON ID EQUAL objeto_asg
+Rule 86    objeto_asg -> LLAVEA propiedades_asg LLAVEC
+Rule 87    propiedades_asg -> <empty>
+Rule 88    propiedades_asg -> propiedad_asg
+Rule 89    propiedades_asg -> propiedad_asg COMA propiedades_asg
+Rule 90    propiedad_asg -> ID COLON expresion
+Rule 91    propiedad_asg -> STRING COLON expresion
 
 Terminals, with rules where they appear
 
@@ -105,8 +103,8 @@ BRACKETCLOSE         : 47 50
 BRACKETOPEN          : 47 50
 CHAR                 : 39
 CHARACTER            : 63
-COLON                : 65 68 69 80 81 82 83 84 85 86 87 92 93
-COMA                 : 54 69 73 79 91
+COLON                : 66 69 70 81 82 83 84 85 90 91
+COMA                 : 54 70 74 80 89
 CONJUNCTION          : 27
 DISJUNCTION          : 28
 DIV                  : 21
@@ -114,36 +112,36 @@ DOT                  : 46 49
 ELSE                 : 58
 ENTERO               : 33
 EQ                   : 26
-EQUAL                : 52 55 75 87
+EQUAL                : 52 55 76 85
 FL                   : 41
 FLOAT                : 62
-FUNCTION             : 65
+FUNCTION             : 66
 GE                   : 25
 GT                   : 23
 HEX                  : 36
-ID                   : 32 46 46 47 49 53 54 65 68 69 70 75 80 82 82 83 84 86 86 87 87 92
+ID                   : 32 46 46 47 49 53 54 65 66 69 70 71 76 81 83 85 85 90
 IF                   : 56
 INT                  : 61
 LE                   : 24
-LET                  : 51 52 86 87
-LLAVEA               : 59 65 76 88
-LLAVEC               : 59 65 76 88
+LET                  : 51 52 85
+LLAVEA               : 59 66 77 86
+LLAVEC               : 59 66 77 86
 LT                   : 22
 MINUS                : 19 30
 NCIENT               : 38
 NEG                  : 31
 NULL                 : 42
 OCT                  : 35
-PARENTHESISCLOSE     : 17 56 60 65 70
-PARENTHESISOPEN      : 17 56 60 65 70
+PARENTHESISCLOSE     : 17 56 60 66 71
+PARENTHESISOPEN      : 17 56 60 66 71
 PLUS                 : 18 29
 REAL                 : 37
-RETURN               : 65
-SEMICOLON            : 7 8 12 13 14 65
-STRING               : 47 50 81 83 85 93
+RETURN               : 66
+SEMICOLON            : 7 8 12 13 14 66
+STRING               : 47 50 82 84 91
 TIMES                : 20
 TR                   : 40
-TYPE                 : 75
+TYPE                 : 76
 WHILE                : 60
 error                : 
 
@@ -153,7 +151,7 @@ acceso_propiedad     : 44
 acceso_propiedad_rec : 46 47 49 50
 asignacion           : 8
 asignacion_objeto    : 13
-axioma               : 65 0
+axioma               : 66 0
 binaria              : 15
 bloque_llaves        : 56 58 60
 bloque_programa      : 4 6 59
@@ -162,24 +160,24 @@ condicion            : 9
 declaracion          : 7
 declaracion_objeto   : 12
 empty                : 3
-expresion            : 17 18 18 19 19 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 30 31 52 55 56 60 65 73 74 92 93
+expresion            : 17 18 18 19 19 20 20 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 30 31 52 55 56 60 66 74 75 90 91
 funcion              : 11
 function_call        : 14 43
-lista_arg            : 65
-lista_arg_rec        : 67 69
+lista_arg            : 66
+lista_arg_rec        : 68 70
 lista_id             : 51 52 54 55
-lista_param          : 70
-lista_param_rec      : 72 73
-objeto_asg           : 45 87
-objeto_dec           : 75 84 85
+lista_param          : 71
+lista_param_rec      : 73 74
+objeto_asg           : 45 85
+objeto_dec           : 76 83 84
 otra_condicion       : 56
 programa             : 2
-propiedad_asg        : 90 91
-propiedad_dec        : 78 79
-propiedades_asg      : 88 91
-propiedades_dec      : 76 79
+propiedad_asg        : 88 89
+propiedad_dec        : 79 80
+propiedades_asg      : 86 89
+propiedades_dec      : 77 80
 sentencia            : 5 6
-tipo                 : 65 68 69 80 81
+tipo                 : 66 69 70 81 82
 unaria               : 16
 
 Parsing method: LALR
@@ -206,11 +204,10 @@ state 0
     (55) asignacion -> . lista_id EQUAL expresion
     (56) condicion -> . IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion
     (60) bucle -> . WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves
-    (65) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
-    (75) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
-    (86) asignacion_objeto -> . LET ID COLON ID
-    (87) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (66) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (76) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
+    (85) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (53) lista_id -> . ID
     (54) lista_id -> . ID COMA lista_id
 
@@ -286,11 +283,10 @@ state 5
     (55) asignacion -> . lista_id EQUAL expresion
     (56) condicion -> . IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion
     (60) bucle -> . WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves
-    (65) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
-    (75) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
-    (86) asignacion_objeto -> . LET ID COLON ID
-    (87) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (66) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (76) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
+    (85) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (53) lista_id -> . ID
     (54) lista_id -> . ID COMA lista_id
 
@@ -400,8 +396,7 @@ state 14
 
     (51) declaracion -> LET . lista_id
     (52) declaracion -> LET . lista_id EQUAL expresion
-    (86) asignacion_objeto -> LET . ID COLON ID
-    (87) asignacion_objeto -> LET . ID COLON ID EQUAL objeto_asg
+    (85) asignacion_objeto -> LET . ID COLON ID EQUAL objeto_asg
     (53) lista_id -> . ID
     (54) lista_id -> . ID COMA lista_id
 
@@ -432,14 +427,14 @@ state 17
 
 state 18
 
-    (65) funcion -> FUNCTION . ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION . ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
 
     ID              shift and go to state 32
 
 
 state 19
 
-    (70) function_call -> ID . PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> ID . PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (53) lista_id -> ID .
     (54) lista_id -> ID . COMA lista_id
 
@@ -450,7 +445,7 @@ state 19
 
 state 20
 
-    (75) declaracion_objeto -> TYPE . ID EQUAL objeto_dec
+    (76) declaracion_objeto -> TYPE . ID EQUAL objeto_dec
 
     ID              shift and go to state 35
 
@@ -550,8 +545,7 @@ state 27
 
 state 28
 
-    (86) asignacion_objeto -> LET ID . COLON ID
-    (87) asignacion_objeto -> LET ID . COLON ID EQUAL objeto_asg
+    (85) asignacion_objeto -> LET ID . COLON ID EQUAL objeto_asg
     (53) lista_id -> ID .
     (54) lista_id -> ID . COMA lista_id
 
@@ -595,10 +589,10 @@ state 29
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -658,10 +652,10 @@ state 30
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -721,10 +715,10 @@ state 31
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -752,18 +746,18 @@ state 31
 
 state 32
 
-    (65) funcion -> FUNCTION ID . PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION ID . PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
 
     PARENTHESISOPEN shift and go to state 62
 
 
 state 33
 
-    (70) function_call -> ID PARENTHESISOPEN . lista_param PARENTHESISCLOSE
-    (71) lista_param -> .
-    (72) lista_param -> . lista_param_rec
-    (73) lista_param_rec -> . expresion COMA lista_param_rec
-    (74) lista_param_rec -> . expresion
+    (71) function_call -> ID PARENTHESISOPEN . lista_param PARENTHESISCLOSE
+    (72) lista_param -> .
+    (73) lista_param -> . lista_param_rec
+    (74) lista_param_rec -> . expresion COMA lista_param_rec
+    (75) lista_param_rec -> . expresion
     (15) expresion -> . binaria
     (16) expresion -> . unaria
     (17) expresion -> . PARENTHESISOPEN expresion PARENTHESISCLOSE
@@ -795,12 +789,12 @@ state 33
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
-    PARENTHESISCLOSE reduce using rule 71 (lista_param -> .)
+    PARENTHESISCLOSE reduce using rule 72 (lista_param -> .)
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
     ENTERO          shift and go to state 43
@@ -839,7 +833,7 @@ state 34
 
 state 35
 
-    (75) declaracion_objeto -> TYPE ID . EQUAL objeto_dec
+    (76) declaracion_objeto -> TYPE ID . EQUAL objeto_dec
 
     EQUAL           shift and go to state 68
 
@@ -878,10 +872,10 @@ state 36
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -909,8 +903,7 @@ state 36
 
 state 37
 
-    (86) asignacion_objeto -> LET ID COLON . ID
-    (87) asignacion_objeto -> LET ID COLON . ID EQUAL objeto_asg
+    (85) asignacion_objeto -> LET ID COLON . ID EQUAL objeto_asg
 
     ID              shift and go to state 70
 
@@ -1020,10 +1013,10 @@ state 41
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -1052,7 +1045,7 @@ state 41
 state 42
 
     (32) expresion -> ID .
-    (70) function_call -> ID . PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> ID . PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> ID . DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> ID . BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
 
@@ -1383,10 +1376,10 @@ state 56
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -1446,10 +1439,10 @@ state 57
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -1509,10 +1502,10 @@ state 58
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -1540,14 +1533,14 @@ state 58
 
 state 59
 
-    (88) objeto_asg -> LLAVEA . propiedades_asg LLAVEC
-    (89) propiedades_asg -> .
-    (90) propiedades_asg -> . propiedad_asg
-    (91) propiedades_asg -> . propiedad_asg COMA propiedades_asg
-    (92) propiedad_asg -> . ID COLON expresion
-    (93) propiedad_asg -> . STRING COLON expresion
+    (86) objeto_asg -> LLAVEA . propiedades_asg LLAVEC
+    (87) propiedades_asg -> .
+    (88) propiedades_asg -> . propiedad_asg
+    (89) propiedades_asg -> . propiedad_asg COMA propiedades_asg
+    (90) propiedad_asg -> . ID COLON expresion
+    (91) propiedad_asg -> . STRING COLON expresion
 
-    LLAVEC          reduce using rule 89 (propiedades_asg -> .)
+    LLAVEC          reduce using rule 87 (propiedades_asg -> .)
     ID              shift and go to state 90
     STRING          shift and go to state 91
 
@@ -1614,13 +1607,13 @@ state 61
 
 state 62
 
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN . lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
-    (66) lista_arg -> .
-    (67) lista_arg -> . lista_arg_rec
-    (68) lista_arg_rec -> . ID COLON tipo
-    (69) lista_arg_rec -> . ID COLON tipo COMA lista_arg_rec
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN . lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (67) lista_arg -> .
+    (68) lista_arg -> . lista_arg_rec
+    (69) lista_arg_rec -> . ID COLON tipo
+    (70) lista_arg_rec -> . ID COLON tipo COMA lista_arg_rec
 
-    PARENTHESISCLOSE reduce using rule 66 (lista_arg -> .)
+    PARENTHESISCLOSE reduce using rule 67 (lista_arg -> .)
     ID              shift and go to state 94
 
     lista_arg                      shift and go to state 95
@@ -1628,22 +1621,22 @@ state 62
 
 state 63
 
-    (70) function_call -> ID PARENTHESISOPEN lista_param . PARENTHESISCLOSE
+    (71) function_call -> ID PARENTHESISOPEN lista_param . PARENTHESISCLOSE
 
     PARENTHESISCLOSE shift and go to state 97
 
 
 state 64
 
-    (72) lista_param -> lista_param_rec .
+    (73) lista_param -> lista_param_rec .
 
-    PARENTHESISCLOSE reduce using rule 72 (lista_param -> lista_param_rec .)
+    PARENTHESISCLOSE reduce using rule 73 (lista_param -> lista_param_rec .)
 
 
 state 65
 
-    (73) lista_param_rec -> expresion . COMA lista_param_rec
-    (74) lista_param_rec -> expresion .
+    (74) lista_param_rec -> expresion . COMA lista_param_rec
+    (75) lista_param_rec -> expresion .
     (18) binaria -> expresion . PLUS expresion
     (19) binaria -> expresion . MINUS expresion
     (20) binaria -> expresion . TIMES expresion
@@ -1657,7 +1650,7 @@ state 65
     (28) binaria -> expresion . DISJUNCTION expresion
 
     COMA            shift and go to state 98
-    PARENTHESISCLOSE reduce using rule 74 (lista_param_rec -> expresion .)
+    PARENTHESISCLOSE reduce using rule 75 (lista_param_rec -> expresion .)
     PLUS            shift and go to state 71
     MINUS           shift and go to state 72
     TIMES           shift and go to state 73
@@ -1691,8 +1684,8 @@ state 67
 
 state 68
 
-    (75) declaracion_objeto -> TYPE ID EQUAL . objeto_dec
-    (76) objeto_dec -> . LLAVEA propiedades_dec LLAVEC
+    (76) declaracion_objeto -> TYPE ID EQUAL . objeto_dec
+    (77) objeto_dec -> . LLAVEA propiedades_dec LLAVEC
 
     LLAVEA          shift and go to state 100
 
@@ -1729,10 +1722,8 @@ state 69
 
 state 70
 
-    (86) asignacion_objeto -> LET ID COLON ID .
-    (87) asignacion_objeto -> LET ID COLON ID . EQUAL objeto_asg
+    (85) asignacion_objeto -> LET ID COLON ID . EQUAL objeto_asg
 
-    SEMICOLON       reduce using rule 86 (asignacion_objeto -> LET ID COLON ID .)
     EQUAL           shift and go to state 101
 
 
@@ -1770,10 +1761,10 @@ state 71
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -1833,10 +1824,10 @@ state 72
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -1896,10 +1887,10 @@ state 73
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -1959,10 +1950,10 @@ state 74
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2022,10 +2013,10 @@ state 75
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2085,10 +2076,10 @@ state 76
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2148,10 +2139,10 @@ state 77
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2211,10 +2202,10 @@ state 78
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2274,10 +2265,10 @@ state 79
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2337,10 +2328,10 @@ state 80
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2400,10 +2391,10 @@ state 81
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2606,30 +2597,30 @@ state 87
 
 state 88
 
-    (88) objeto_asg -> LLAVEA propiedades_asg . LLAVEC
+    (86) objeto_asg -> LLAVEA propiedades_asg . LLAVEC
 
     LLAVEC          shift and go to state 116
 
 
 state 89
 
-    (90) propiedades_asg -> propiedad_asg .
-    (91) propiedades_asg -> propiedad_asg . COMA propiedades_asg
+    (88) propiedades_asg -> propiedad_asg .
+    (89) propiedades_asg -> propiedad_asg . COMA propiedades_asg
 
-    LLAVEC          reduce using rule 90 (propiedades_asg -> propiedad_asg .)
+    LLAVEC          reduce using rule 88 (propiedades_asg -> propiedad_asg .)
     COMA            shift and go to state 117
 
 
 state 90
 
-    (92) propiedad_asg -> ID . COLON expresion
+    (90) propiedad_asg -> ID . COLON expresion
 
     COLON           shift and go to state 118
 
 
 state 91
 
-    (93) propiedad_asg -> STRING . COLON expresion
+    (91) propiedad_asg -> STRING . COLON expresion
 
     COLON           shift and go to state 119
 
@@ -2654,52 +2645,52 @@ state 93
 
 state 94
 
-    (68) lista_arg_rec -> ID . COLON tipo
-    (69) lista_arg_rec -> ID . COLON tipo COMA lista_arg_rec
+    (69) lista_arg_rec -> ID . COLON tipo
+    (70) lista_arg_rec -> ID . COLON tipo COMA lista_arg_rec
 
     COLON           shift and go to state 123
 
 
 state 95
 
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg . PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg . PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
 
     PARENTHESISCLOSE shift and go to state 124
 
 
 state 96
 
-    (67) lista_arg -> lista_arg_rec .
+    (68) lista_arg -> lista_arg_rec .
 
-    PARENTHESISCLOSE reduce using rule 67 (lista_arg -> lista_arg_rec .)
+    PARENTHESISCLOSE reduce using rule 68 (lista_arg -> lista_arg_rec .)
 
 
 state 97
 
-    (70) function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .
+    (71) function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .
 
-    SEMICOLON       reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    PLUS            reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    MINUS           reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    TIMES           reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    DIV             reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    LT              reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    GT              reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    LE              reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    GE              reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    EQ              reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    CONJUNCTION     reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    DISJUNCTION     reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    PARENTHESISCLOSE reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    COMA            reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
-    LLAVEC          reduce using rule 70 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    SEMICOLON       reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    PLUS            reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    MINUS           reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    TIMES           reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    DIV             reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    LT              reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    GT              reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    LE              reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    GE              reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    EQ              reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    CONJUNCTION     reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    DISJUNCTION     reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    PARENTHESISCLOSE reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    COMA            reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
+    LLAVEC          reduce using rule 71 (function_call -> ID PARENTHESISOPEN lista_param PARENTHESISCLOSE .)
 
 
 state 98
 
-    (73) lista_param_rec -> expresion COMA . lista_param_rec
-    (73) lista_param_rec -> . expresion COMA lista_param_rec
-    (74) lista_param_rec -> . expresion
+    (74) lista_param_rec -> expresion COMA . lista_param_rec
+    (74) lista_param_rec -> . expresion COMA lista_param_rec
+    (75) lista_param_rec -> . expresion
     (15) expresion -> . binaria
     (16) expresion -> . unaria
     (17) expresion -> . PARENTHESISOPEN expresion PARENTHESISCLOSE
@@ -2731,10 +2722,10 @@ state 98
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -2763,25 +2754,23 @@ state 98
 
 state 99
 
-    (75) declaracion_objeto -> TYPE ID EQUAL objeto_dec .
+    (76) declaracion_objeto -> TYPE ID EQUAL objeto_dec .
 
-    SEMICOLON       reduce using rule 75 (declaracion_objeto -> TYPE ID EQUAL objeto_dec .)
+    SEMICOLON       reduce using rule 76 (declaracion_objeto -> TYPE ID EQUAL objeto_dec .)
 
 
 state 100
 
-    (76) objeto_dec -> LLAVEA . propiedades_dec LLAVEC
-    (77) propiedades_dec -> .
-    (78) propiedades_dec -> . propiedad_dec
-    (79) propiedades_dec -> . propiedad_dec COMA propiedades_dec
-    (80) propiedad_dec -> . ID COLON tipo
-    (81) propiedad_dec -> . STRING COLON tipo
-    (82) propiedad_dec -> . ID COLON ID
-    (83) propiedad_dec -> . STRING COLON ID
-    (84) propiedad_dec -> . ID COLON objeto_dec
-    (85) propiedad_dec -> . STRING COLON objeto_dec
+    (77) objeto_dec -> LLAVEA . propiedades_dec LLAVEC
+    (78) propiedades_dec -> .
+    (79) propiedades_dec -> . propiedad_dec
+    (80) propiedades_dec -> . propiedad_dec COMA propiedades_dec
+    (81) propiedad_dec -> . ID COLON tipo
+    (82) propiedad_dec -> . STRING COLON tipo
+    (83) propiedad_dec -> . ID COLON objeto_dec
+    (84) propiedad_dec -> . STRING COLON objeto_dec
 
-    LLAVEC          reduce using rule 77 (propiedades_dec -> .)
+    LLAVEC          reduce using rule 78 (propiedades_dec -> .)
     ID              shift and go to state 128
     STRING          shift and go to state 129
 
@@ -2790,8 +2779,8 @@ state 100
 
 state 101
 
-    (87) asignacion_objeto -> LET ID COLON ID EQUAL . objeto_asg
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (85) asignacion_objeto -> LET ID COLON ID EQUAL . objeto_asg
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     LLAVEA          shift and go to state 59
 
@@ -3338,35 +3327,35 @@ state 115
 
 state 116
 
-    (88) objeto_asg -> LLAVEA propiedades_asg LLAVEC .
+    (86) objeto_asg -> LLAVEA propiedades_asg LLAVEC .
 
-    PLUS            reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    MINUS           reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    TIMES           reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    DIV             reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    LT              reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    GT              reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    LE              reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    GE              reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    EQ              reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    CONJUNCTION     reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    DISJUNCTION     reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    SEMICOLON       reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    PARENTHESISCLOSE reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    COMA            reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
-    LLAVEC          reduce using rule 88 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    PLUS            reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    MINUS           reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    TIMES           reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    DIV             reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    LT              reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    GT              reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    LE              reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    GE              reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    EQ              reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    CONJUNCTION     reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    DISJUNCTION     reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    SEMICOLON       reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    PARENTHESISCLOSE reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    COMA            reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
+    LLAVEC          reduce using rule 86 (objeto_asg -> LLAVEA propiedades_asg LLAVEC .)
 
 
 state 117
 
-    (91) propiedades_asg -> propiedad_asg COMA . propiedades_asg
-    (89) propiedades_asg -> .
-    (90) propiedades_asg -> . propiedad_asg
-    (91) propiedades_asg -> . propiedad_asg COMA propiedades_asg
-    (92) propiedad_asg -> . ID COLON expresion
-    (93) propiedad_asg -> . STRING COLON expresion
+    (89) propiedades_asg -> propiedad_asg COMA . propiedades_asg
+    (87) propiedades_asg -> .
+    (88) propiedades_asg -> . propiedad_asg
+    (89) propiedades_asg -> . propiedad_asg COMA propiedades_asg
+    (90) propiedad_asg -> . ID COLON expresion
+    (91) propiedad_asg -> . STRING COLON expresion
 
-    LLAVEC          reduce using rule 89 (propiedades_asg -> .)
+    LLAVEC          reduce using rule 87 (propiedades_asg -> .)
     ID              shift and go to state 90
     STRING          shift and go to state 91
 
@@ -3375,7 +3364,7 @@ state 117
 
 state 118
 
-    (92) propiedad_asg -> ID COLON . expresion
+    (90) propiedad_asg -> ID COLON . expresion
     (15) expresion -> . binaria
     (16) expresion -> . unaria
     (17) expresion -> . PARENTHESISOPEN expresion PARENTHESISCLOSE
@@ -3407,10 +3396,10 @@ state 118
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -3438,7 +3427,7 @@ state 118
 
 state 119
 
-    (93) propiedad_asg -> STRING COLON . expresion
+    (91) propiedad_asg -> STRING COLON . expresion
     (15) expresion -> . binaria
     (16) expresion -> . unaria
     (17) expresion -> . PARENTHESISOPEN expresion PARENTHESISCLOSE
@@ -3470,10 +3459,10 @@ state 119
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -3536,11 +3525,10 @@ state 121
     (55) asignacion -> . lista_id EQUAL expresion
     (56) condicion -> . IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion
     (60) bucle -> . WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves
-    (65) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
-    (75) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
-    (86) asignacion_objeto -> . LET ID COLON ID
-    (87) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (66) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (76) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
+    (85) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (53) lista_id -> . ID
     (54) lista_id -> . ID COMA lista_id
 
@@ -3580,80 +3568,80 @@ state 122
 
 state 123
 
-    (68) lista_arg_rec -> ID COLON . tipo
-    (69) lista_arg_rec -> ID COLON . tipo COMA lista_arg_rec
+    (69) lista_arg_rec -> ID COLON . tipo
+    (70) lista_arg_rec -> ID COLON . tipo COMA lista_arg_rec
     (61) tipo -> . INT
     (62) tipo -> . FLOAT
     (63) tipo -> . CHARACTER
     (64) tipo -> . BOOLEAN
+    (65) tipo -> . ID
 
-    INT             shift and go to state 142
-    FLOAT           shift and go to state 143
-    CHARACTER       shift and go to state 144
-    BOOLEAN         shift and go to state 145
+    INT             shift and go to state 143
+    FLOAT           shift and go to state 144
+    CHARACTER       shift and go to state 145
+    BOOLEAN         shift and go to state 146
+    ID              shift and go to state 141
 
-    tipo                           shift and go to state 141
+    tipo                           shift and go to state 142
 
 state 124
 
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE . COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE . COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
 
-    COLON           shift and go to state 146
+    COLON           shift and go to state 147
 
 
 state 125
 
-    (73) lista_param_rec -> expresion COMA lista_param_rec .
+    (74) lista_param_rec -> expresion COMA lista_param_rec .
 
-    PARENTHESISCLOSE reduce using rule 73 (lista_param_rec -> expresion COMA lista_param_rec .)
+    PARENTHESISCLOSE reduce using rule 74 (lista_param_rec -> expresion COMA lista_param_rec .)
 
 
 state 126
 
-    (76) objeto_dec -> LLAVEA propiedades_dec . LLAVEC
+    (77) objeto_dec -> LLAVEA propiedades_dec . LLAVEC
 
-    LLAVEC          shift and go to state 147
+    LLAVEC          shift and go to state 148
 
 
 state 127
 
-    (78) propiedades_dec -> propiedad_dec .
-    (79) propiedades_dec -> propiedad_dec . COMA propiedades_dec
+    (79) propiedades_dec -> propiedad_dec .
+    (80) propiedades_dec -> propiedad_dec . COMA propiedades_dec
 
-    LLAVEC          reduce using rule 78 (propiedades_dec -> propiedad_dec .)
-    COMA            shift and go to state 148
+    LLAVEC          reduce using rule 79 (propiedades_dec -> propiedad_dec .)
+    COMA            shift and go to state 149
 
 
 state 128
 
-    (80) propiedad_dec -> ID . COLON tipo
-    (82) propiedad_dec -> ID . COLON ID
-    (84) propiedad_dec -> ID . COLON objeto_dec
-
-    COLON           shift and go to state 149
-
-
-state 129
-
-    (81) propiedad_dec -> STRING . COLON tipo
-    (83) propiedad_dec -> STRING . COLON ID
-    (85) propiedad_dec -> STRING . COLON objeto_dec
+    (81) propiedad_dec -> ID . COLON tipo
+    (83) propiedad_dec -> ID . COLON objeto_dec
 
     COLON           shift and go to state 150
 
 
+state 129
+
+    (82) propiedad_dec -> STRING . COLON tipo
+    (84) propiedad_dec -> STRING . COLON objeto_dec
+
+    COLON           shift and go to state 151
+
+
 state 130
 
-    (87) asignacion_objeto -> LET ID COLON ID EQUAL objeto_asg .
+    (85) asignacion_objeto -> LET ID COLON ID EQUAL objeto_asg .
 
-    SEMICOLON       reduce using rule 87 (asignacion_objeto -> LET ID COLON ID EQUAL objeto_asg .)
+    SEMICOLON       reduce using rule 85 (asignacion_objeto -> LET ID COLON ID EQUAL objeto_asg .)
 
 
 state 131
 
     (49) acceso_propiedad_rec -> DOT . ID acceso_propiedad_rec
 
-    ID              shift and go to state 151
+    ID              shift and go to state 152
 
 
 state 132
@@ -3681,7 +3669,7 @@ state 133
 
     (50) acceso_propiedad_rec -> BRACKETOPEN . STRING BRACKETCLOSE acceso_propiedad_rec
 
-    STRING          shift and go to state 152
+    STRING          shift and go to state 153
 
 
 state 134
@@ -3709,18 +3697,18 @@ state 134
     DOT             shift and go to state 131
     BRACKETOPEN     shift and go to state 133
 
-    acceso_propiedad_rec           shift and go to state 153
+    acceso_propiedad_rec           shift and go to state 154
 
 state 135
 
-    (91) propiedades_asg -> propiedad_asg COMA propiedades_asg .
+    (89) propiedades_asg -> propiedad_asg COMA propiedades_asg .
 
-    LLAVEC          reduce using rule 91 (propiedades_asg -> propiedad_asg COMA propiedades_asg .)
+    LLAVEC          reduce using rule 89 (propiedades_asg -> propiedad_asg COMA propiedades_asg .)
 
 
 state 136
 
-    (92) propiedad_asg -> ID COLON expresion .
+    (90) propiedad_asg -> ID COLON expresion .
     (18) binaria -> expresion . PLUS expresion
     (19) binaria -> expresion . MINUS expresion
     (20) binaria -> expresion . TIMES expresion
@@ -3733,8 +3721,8 @@ state 136
     (27) binaria -> expresion . CONJUNCTION expresion
     (28) binaria -> expresion . DISJUNCTION expresion
 
-    COMA            reduce using rule 92 (propiedad_asg -> ID COLON expresion .)
-    LLAVEC          reduce using rule 92 (propiedad_asg -> ID COLON expresion .)
+    COMA            reduce using rule 90 (propiedad_asg -> ID COLON expresion .)
+    LLAVEC          reduce using rule 90 (propiedad_asg -> ID COLON expresion .)
     PLUS            shift and go to state 71
     MINUS           shift and go to state 72
     TIMES           shift and go to state 73
@@ -3750,7 +3738,7 @@ state 136
 
 state 137
 
-    (93) propiedad_asg -> STRING COLON expresion .
+    (91) propiedad_asg -> STRING COLON expresion .
     (18) binaria -> expresion . PLUS expresion
     (19) binaria -> expresion . MINUS expresion
     (20) binaria -> expresion . TIMES expresion
@@ -3763,8 +3751,8 @@ state 137
     (27) binaria -> expresion . CONJUNCTION expresion
     (28) binaria -> expresion . DISJUNCTION expresion
 
-    COMA            reduce using rule 93 (propiedad_asg -> STRING COLON expresion .)
-    LLAVEC          reduce using rule 93 (propiedad_asg -> STRING COLON expresion .)
+    COMA            reduce using rule 91 (propiedad_asg -> STRING COLON expresion .)
+    LLAVEC          reduce using rule 91 (propiedad_asg -> STRING COLON expresion .)
     PLUS            shift and go to state 71
     MINUS           shift and go to state 72
     TIMES           shift and go to state 73
@@ -3800,25 +3788,35 @@ state 139
 
     LLAVEA          shift and go to state 121
 
-    bloque_llaves                  shift and go to state 154
+    bloque_llaves                  shift and go to state 155
 
 state 140
 
     (59) bloque_llaves -> LLAVEA bloque_programa . LLAVEC
 
-    LLAVEC          shift and go to state 155
+    LLAVEC          shift and go to state 156
 
 
 state 141
 
-    (68) lista_arg_rec -> ID COLON tipo .
-    (69) lista_arg_rec -> ID COLON tipo . COMA lista_arg_rec
+    (65) tipo -> ID .
 
-    PARENTHESISCLOSE reduce using rule 68 (lista_arg_rec -> ID COLON tipo .)
-    COMA            shift and go to state 156
+    COMA            reduce using rule 65 (tipo -> ID .)
+    PARENTHESISCLOSE reduce using rule 65 (tipo -> ID .)
+    LLAVEA          reduce using rule 65 (tipo -> ID .)
+    LLAVEC          reduce using rule 65 (tipo -> ID .)
 
 
 state 142
+
+    (69) lista_arg_rec -> ID COLON tipo .
+    (70) lista_arg_rec -> ID COLON tipo . COMA lista_arg_rec
+
+    PARENTHESISCLOSE reduce using rule 69 (lista_arg_rec -> ID COLON tipo .)
+    COMA            shift and go to state 157
+
+
+state 143
 
     (61) tipo -> INT .
 
@@ -3828,7 +3826,7 @@ state 142
     LLAVEC          reduce using rule 61 (tipo -> INT .)
 
 
-state 143
+state 144
 
     (62) tipo -> FLOAT .
 
@@ -3838,7 +3836,7 @@ state 143
     LLAVEC          reduce using rule 62 (tipo -> FLOAT .)
 
 
-state 144
+state 145
 
     (63) tipo -> CHARACTER .
 
@@ -3848,7 +3846,7 @@ state 144
     LLAVEC          reduce using rule 63 (tipo -> CHARACTER .)
 
 
-state 145
+state 146
 
     (64) tipo -> BOOLEAN .
 
@@ -3858,93 +3856,93 @@ state 145
     LLAVEC          reduce using rule 64 (tipo -> BOOLEAN .)
 
 
-state 146
+state 147
 
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON . tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON . tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
     (61) tipo -> . INT
     (62) tipo -> . FLOAT
     (63) tipo -> . CHARACTER
     (64) tipo -> . BOOLEAN
+    (65) tipo -> . ID
 
-    INT             shift and go to state 142
-    FLOAT           shift and go to state 143
-    CHARACTER       shift and go to state 144
-    BOOLEAN         shift and go to state 145
+    INT             shift and go to state 143
+    FLOAT           shift and go to state 144
+    CHARACTER       shift and go to state 145
+    BOOLEAN         shift and go to state 146
+    ID              shift and go to state 141
 
-    tipo                           shift and go to state 157
-
-state 147
-
-    (76) objeto_dec -> LLAVEA propiedades_dec LLAVEC .
-
-    SEMICOLON       reduce using rule 76 (objeto_dec -> LLAVEA propiedades_dec LLAVEC .)
-    COMA            reduce using rule 76 (objeto_dec -> LLAVEA propiedades_dec LLAVEC .)
-    LLAVEC          reduce using rule 76 (objeto_dec -> LLAVEA propiedades_dec LLAVEC .)
-
+    tipo                           shift and go to state 158
 
 state 148
 
-    (79) propiedades_dec -> propiedad_dec COMA . propiedades_dec
-    (77) propiedades_dec -> .
-    (78) propiedades_dec -> . propiedad_dec
-    (79) propiedades_dec -> . propiedad_dec COMA propiedades_dec
-    (80) propiedad_dec -> . ID COLON tipo
-    (81) propiedad_dec -> . STRING COLON tipo
-    (82) propiedad_dec -> . ID COLON ID
-    (83) propiedad_dec -> . STRING COLON ID
-    (84) propiedad_dec -> . ID COLON objeto_dec
-    (85) propiedad_dec -> . STRING COLON objeto_dec
+    (77) objeto_dec -> LLAVEA propiedades_dec LLAVEC .
 
-    LLAVEC          reduce using rule 77 (propiedades_dec -> .)
+    SEMICOLON       reduce using rule 77 (objeto_dec -> LLAVEA propiedades_dec LLAVEC .)
+    COMA            reduce using rule 77 (objeto_dec -> LLAVEA propiedades_dec LLAVEC .)
+    LLAVEC          reduce using rule 77 (objeto_dec -> LLAVEA propiedades_dec LLAVEC .)
+
+
+state 149
+
+    (80) propiedades_dec -> propiedad_dec COMA . propiedades_dec
+    (78) propiedades_dec -> .
+    (79) propiedades_dec -> . propiedad_dec
+    (80) propiedades_dec -> . propiedad_dec COMA propiedades_dec
+    (81) propiedad_dec -> . ID COLON tipo
+    (82) propiedad_dec -> . STRING COLON tipo
+    (83) propiedad_dec -> . ID COLON objeto_dec
+    (84) propiedad_dec -> . STRING COLON objeto_dec
+
+    LLAVEC          reduce using rule 78 (propiedades_dec -> .)
     ID              shift and go to state 128
     STRING          shift and go to state 129
 
     propiedad_dec                  shift and go to state 127
-    propiedades_dec                shift and go to state 158
+    propiedades_dec                shift and go to state 159
 
-state 149
+state 150
 
-    (80) propiedad_dec -> ID COLON . tipo
-    (82) propiedad_dec -> ID COLON . ID
-    (84) propiedad_dec -> ID COLON . objeto_dec
+    (81) propiedad_dec -> ID COLON . tipo
+    (83) propiedad_dec -> ID COLON . objeto_dec
     (61) tipo -> . INT
     (62) tipo -> . FLOAT
     (63) tipo -> . CHARACTER
     (64) tipo -> . BOOLEAN
-    (76) objeto_dec -> . LLAVEA propiedades_dec LLAVEC
+    (65) tipo -> . ID
+    (77) objeto_dec -> . LLAVEA propiedades_dec LLAVEC
 
-    ID              shift and go to state 159
-    INT             shift and go to state 142
-    FLOAT           shift and go to state 143
-    CHARACTER       shift and go to state 144
-    BOOLEAN         shift and go to state 145
+    INT             shift and go to state 143
+    FLOAT           shift and go to state 144
+    CHARACTER       shift and go to state 145
+    BOOLEAN         shift and go to state 146
+    ID              shift and go to state 141
     LLAVEA          shift and go to state 100
 
     tipo                           shift and go to state 160
     objeto_dec                     shift and go to state 161
 
-state 150
+state 151
 
-    (81) propiedad_dec -> STRING COLON . tipo
-    (83) propiedad_dec -> STRING COLON . ID
-    (85) propiedad_dec -> STRING COLON . objeto_dec
+    (82) propiedad_dec -> STRING COLON . tipo
+    (84) propiedad_dec -> STRING COLON . objeto_dec
     (61) tipo -> . INT
     (62) tipo -> . FLOAT
     (63) tipo -> . CHARACTER
     (64) tipo -> . BOOLEAN
-    (76) objeto_dec -> . LLAVEA propiedades_dec LLAVEC
+    (65) tipo -> . ID
+    (77) objeto_dec -> . LLAVEA propiedades_dec LLAVEC
 
-    ID              shift and go to state 163
-    INT             shift and go to state 142
-    FLOAT           shift and go to state 143
-    CHARACTER       shift and go to state 144
-    BOOLEAN         shift and go to state 145
+    INT             shift and go to state 143
+    FLOAT           shift and go to state 144
+    CHARACTER       shift and go to state 145
+    BOOLEAN         shift and go to state 146
+    ID              shift and go to state 141
     LLAVEA          shift and go to state 100
 
     tipo                           shift and go to state 162
-    objeto_dec                     shift and go to state 164
+    objeto_dec                     shift and go to state 163
 
-state 151
+state 152
 
     (49) acceso_propiedad_rec -> DOT ID . acceso_propiedad_rec
     (48) acceso_propiedad_rec -> .
@@ -3969,16 +3967,16 @@ state 151
     DOT             shift and go to state 131
     BRACKETOPEN     shift and go to state 133
 
-    acceso_propiedad_rec           shift and go to state 165
+    acceso_propiedad_rec           shift and go to state 164
 
-state 152
+state 153
 
     (50) acceso_propiedad_rec -> BRACKETOPEN STRING . BRACKETCLOSE acceso_propiedad_rec
 
-    BRACKETCLOSE    shift and go to state 166
+    BRACKETCLOSE    shift and go to state 165
 
 
-state 153
+state 154
 
     (47) acceso_propiedad -> ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec .
 
@@ -3999,7 +3997,7 @@ state 153
     LLAVEC          reduce using rule 47 (acceso_propiedad -> ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec .)
 
 
-state 154
+state 155
 
     (58) otra_condicion -> ELSE bloque_llaves .
 
@@ -4014,7 +4012,7 @@ state 154
     RETURN          reduce using rule 58 (otra_condicion -> ELSE bloque_llaves .)
 
 
-state 155
+state 156
 
     (59) bloque_llaves -> LLAVEA bloque_programa LLAVEC .
 
@@ -4030,79 +4028,63 @@ state 155
     RETURN          reduce using rule 59 (bloque_llaves -> LLAVEA bloque_programa LLAVEC .)
 
 
-state 156
+state 157
 
-    (69) lista_arg_rec -> ID COLON tipo COMA . lista_arg_rec
-    (68) lista_arg_rec -> . ID COLON tipo
-    (69) lista_arg_rec -> . ID COLON tipo COMA lista_arg_rec
+    (70) lista_arg_rec -> ID COLON tipo COMA . lista_arg_rec
+    (69) lista_arg_rec -> . ID COLON tipo
+    (70) lista_arg_rec -> . ID COLON tipo COMA lista_arg_rec
 
     ID              shift and go to state 94
 
-    lista_arg_rec                  shift and go to state 167
-
-state 157
-
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo . LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
-
-    LLAVEA          shift and go to state 168
-
+    lista_arg_rec                  shift and go to state 166
 
 state 158
 
-    (79) propiedades_dec -> propiedad_dec COMA propiedades_dec .
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo . LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
 
-    LLAVEC          reduce using rule 79 (propiedades_dec -> propiedad_dec COMA propiedades_dec .)
+    LLAVEA          shift and go to state 167
 
 
 state 159
 
-    (82) propiedad_dec -> ID COLON ID .
+    (80) propiedades_dec -> propiedad_dec COMA propiedades_dec .
 
-    COMA            reduce using rule 82 (propiedad_dec -> ID COLON ID .)
-    LLAVEC          reduce using rule 82 (propiedad_dec -> ID COLON ID .)
+    LLAVEC          reduce using rule 80 (propiedades_dec -> propiedad_dec COMA propiedades_dec .)
 
 
 state 160
 
-    (80) propiedad_dec -> ID COLON tipo .
+    (81) propiedad_dec -> ID COLON tipo .
 
-    COMA            reduce using rule 80 (propiedad_dec -> ID COLON tipo .)
-    LLAVEC          reduce using rule 80 (propiedad_dec -> ID COLON tipo .)
+    COMA            reduce using rule 81 (propiedad_dec -> ID COLON tipo .)
+    LLAVEC          reduce using rule 81 (propiedad_dec -> ID COLON tipo .)
 
 
 state 161
 
-    (84) propiedad_dec -> ID COLON objeto_dec .
+    (83) propiedad_dec -> ID COLON objeto_dec .
 
-    COMA            reduce using rule 84 (propiedad_dec -> ID COLON objeto_dec .)
-    LLAVEC          reduce using rule 84 (propiedad_dec -> ID COLON objeto_dec .)
+    COMA            reduce using rule 83 (propiedad_dec -> ID COLON objeto_dec .)
+    LLAVEC          reduce using rule 83 (propiedad_dec -> ID COLON objeto_dec .)
 
 
 state 162
 
-    (81) propiedad_dec -> STRING COLON tipo .
+    (82) propiedad_dec -> STRING COLON tipo .
 
-    COMA            reduce using rule 81 (propiedad_dec -> STRING COLON tipo .)
-    LLAVEC          reduce using rule 81 (propiedad_dec -> STRING COLON tipo .)
+    COMA            reduce using rule 82 (propiedad_dec -> STRING COLON tipo .)
+    LLAVEC          reduce using rule 82 (propiedad_dec -> STRING COLON tipo .)
 
 
 state 163
 
-    (83) propiedad_dec -> STRING COLON ID .
+    (84) propiedad_dec -> STRING COLON objeto_dec .
 
-    COMA            reduce using rule 83 (propiedad_dec -> STRING COLON ID .)
-    LLAVEC          reduce using rule 83 (propiedad_dec -> STRING COLON ID .)
+    COMA            reduce using rule 84 (propiedad_dec -> STRING COLON objeto_dec .)
+    LLAVEC          reduce using rule 84 (propiedad_dec -> STRING COLON objeto_dec .)
 
 
 state 164
-
-    (85) propiedad_dec -> STRING COLON objeto_dec .
-
-    COMA            reduce using rule 85 (propiedad_dec -> STRING COLON objeto_dec .)
-    LLAVEC          reduce using rule 85 (propiedad_dec -> STRING COLON objeto_dec .)
-
-
-state 165
 
     (49) acceso_propiedad_rec -> DOT ID acceso_propiedad_rec .
 
@@ -4123,7 +4105,7 @@ state 165
     LLAVEC          reduce using rule 49 (acceso_propiedad_rec -> DOT ID acceso_propiedad_rec .)
 
 
-state 166
+state 165
 
     (50) acceso_propiedad_rec -> BRACKETOPEN STRING BRACKETCLOSE . acceso_propiedad_rec
     (48) acceso_propiedad_rec -> .
@@ -4148,18 +4130,18 @@ state 166
     DOT             shift and go to state 131
     BRACKETOPEN     shift and go to state 133
 
-    acceso_propiedad_rec           shift and go to state 169
+    acceso_propiedad_rec           shift and go to state 168
+
+state 166
+
+    (70) lista_arg_rec -> ID COLON tipo COMA lista_arg_rec .
+
+    PARENTHESISCLOSE reduce using rule 70 (lista_arg_rec -> ID COLON tipo COMA lista_arg_rec .)
+
 
 state 167
 
-    (69) lista_arg_rec -> ID COLON tipo COMA lista_arg_rec .
-
-    PARENTHESISCLOSE reduce using rule 69 (lista_arg_rec -> ID COLON tipo COMA lista_arg_rec .)
-
-
-state 168
-
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA . axioma RETURN expresion SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA . axioma RETURN expresion SEMICOLON LLAVEC
     (2) axioma -> . programa
     (3) axioma -> . empty
     (4) programa -> . bloque_programa
@@ -4179,11 +4161,10 @@ state 168
     (55) asignacion -> . lista_id EQUAL expresion
     (56) condicion -> . IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion
     (60) bucle -> . WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves
-    (65) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
-    (75) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
-    (86) asignacion_objeto -> . LET ID COLON ID
-    (87) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (66) funcion -> . FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC
+    (76) declaracion_objeto -> . TYPE ID EQUAL objeto_dec
+    (85) asignacion_objeto -> . LET ID COLON ID EQUAL objeto_asg
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (53) lista_id -> . ID
     (54) lista_id -> . ID COMA lista_id
 
@@ -4195,7 +4176,7 @@ state 168
     TYPE            shift and go to state 20
     ID              shift and go to state 19
 
-    axioma                         shift and go to state 170
+    axioma                         shift and go to state 169
     programa                       shift and go to state 2
     empty                          shift and go to state 3
     bloque_programa                shift and go to state 4
@@ -4210,7 +4191,7 @@ state 168
     function_call                  shift and go to state 13
     lista_id                       shift and go to state 15
 
-state 169
+state 168
 
     (50) acceso_propiedad_rec -> BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec .
 
@@ -4231,16 +4212,16 @@ state 169
     LLAVEC          reduce using rule 50 (acceso_propiedad_rec -> BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec .)
 
 
+state 169
+
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma . RETURN expresion SEMICOLON LLAVEC
+
+    RETURN          shift and go to state 170
+
+
 state 170
 
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma . RETURN expresion SEMICOLON LLAVEC
-
-    RETURN          shift and go to state 171
-
-
-state 171
-
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN . expresion SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN . expresion SEMICOLON LLAVEC
     (15) expresion -> . binaria
     (16) expresion -> . unaria
     (17) expresion -> . PARENTHESISOPEN expresion PARENTHESISCLOSE
@@ -4272,10 +4253,10 @@ state 171
     (29) unaria -> . PLUS expresion
     (30) unaria -> . MINUS expresion
     (31) unaria -> . NEG expresion
-    (70) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
+    (71) function_call -> . ID PARENTHESISOPEN lista_param PARENTHESISCLOSE
     (46) acceso_propiedad -> . ID DOT ID acceso_propiedad_rec
     (47) acceso_propiedad -> . ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec
-    (88) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
+    (86) objeto_asg -> . LLAVEA propiedades_asg LLAVEC
 
     PARENTHESISOPEN shift and go to state 41
     ID              shift and go to state 42
@@ -4294,16 +4275,16 @@ state 171
     NEG             shift and go to state 58
     LLAVEA          shift and go to state 59
 
-    expresion                      shift and go to state 172
+    expresion                      shift and go to state 171
     binaria                        shift and go to state 39
     unaria                         shift and go to state 40
     function_call                  shift and go to state 53
     acceso_propiedad               shift and go to state 54
     objeto_asg                     shift and go to state 55
 
-state 172
+state 171
 
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion . SEMICOLON LLAVEC
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion . SEMICOLON LLAVEC
     (18) binaria -> expresion . PLUS expresion
     (19) binaria -> expresion . MINUS expresion
     (20) binaria -> expresion . TIMES expresion
@@ -4316,7 +4297,7 @@ state 172
     (27) binaria -> expresion . CONJUNCTION expresion
     (28) binaria -> expresion . DISJUNCTION expresion
 
-    SEMICOLON       shift and go to state 173
+    SEMICOLON       shift and go to state 172
     PLUS            shift and go to state 71
     MINUS           shift and go to state 72
     TIMES           shift and go to state 73
@@ -4330,24 +4311,24 @@ state 172
     DISJUNCTION     shift and go to state 81
 
 
+state 172
+
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON . LLAVEC
+
+    LLAVEC          shift and go to state 173
+
+
 state 173
 
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON . LLAVEC
+    (66) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .
 
-    LLAVEC          shift and go to state 174
-
-
-state 174
-
-    (65) funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .
-
-    LET             reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    IF              reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    WHILE           reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    FUNCTION        reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    TYPE            reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    ID              reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    $end            reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    LLAVEC          reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
-    RETURN          reduce using rule 65 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    LET             reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    IF              reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    WHILE           reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    FUNCTION        reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    TYPE            reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    ID              reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    $end            reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    LLAVEC          reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
+    RETURN          reduce using rule 66 (funcion -> FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC .)
 

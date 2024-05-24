@@ -7,7 +7,7 @@ type Vacio = { };
 type Vacio = { propiedad : int, };
 
 // Creación de un objeto AJSON
-type Ojeto = { prop1 : character, prop2 : int, prop3 : boolean, };
+type Objeto = { prop1 : character, prop2 : int, prop3 : boolean, };
 type Cesta = { "cantidad" : int, otro : character };
 
 type Tarea = { id : int, nombre : character, completada : boolean, };
@@ -28,5 +28,5 @@ type Respuesta = { "error" : Error, "resultado" : character, };
 let VAR;
 type VAR = { prop1 : int, }; 
 
-// Creación de un objeto 
-
+// Asignación de un objeto a una variable
+let mi_objeto : Objeto = { prop1 : 'h', prop2 : 42, prop3 : tr, };

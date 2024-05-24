@@ -431,12 +431,17 @@ class ParserClass:
                 | FLOAT
                 | CHARACTER
                 | BOOLEAN'''
-        p[0] = p[1]
+        tipo = p[1]
+        if p[1] == 'character':
+            tipo = 'char'
+        elif p[1] == 'boolean':
+            tipo = 'bool'
+        p[0] = tipo
         print("Tipo: ", p[0])
 
         pass
 
-    """ def p_tipo_objeto(self, p):
+    def p_tipo_objeto(self, p):
         '''tipo : ID'''
         if self.registro.get(p[1]) is None:
             print(f"ERROR[Sem] El objeto {p[1]} no existe.")
@@ -444,7 +449,7 @@ class ParserClass:
         else:
             p[0] = self.registro[p[1]]
         print("Tipo obj: ", p[0])
-        pass """
+        pass
 
     # DEBE haber minimo un return en el bloque de ejecuciones de la función.
 
@@ -556,21 +561,10 @@ class ParserClass:
         if p[3] == -1:
             p[0] = -1
         else:
-            p[0] = {p[1]: (p[3], None)}
+            p[0] = {p[1]: p[3]}
         pass
 
-    def p_propiedad_dec2(self, p):
-        '''propiedad_dec : ID COLON ID
-                         | STRING COLON ID'''
-        if self.registro.get(p[3]) is None:
-            print(f"ERROR[Sem] El objeto {p[3]} no existe.")
-            p[0] = -1
-        else:
-            p[0] = {p[1]: (p[3], self.registro.get(p[3]))}
-        
-        pass
-
-    def p_propeidad_dec3(self, p):
+    def p_propeidad_dec2(self, p):
         '''propiedad_dec : ID COLON objeto_dec
                          | STRING COLON objeto_dec'''
         p[0] = {p[1]: (p[3])}
@@ -578,23 +572,66 @@ class ParserClass:
         pass
 
     def p_asignacion_objeto(self, p):
-        '''asignacion_objeto : LET ID COLON ID
-                             | LET ID COLON ID EQUAL objeto_asg'''
+        '''asignacion_objeto : LET ID COLON ID EQUAL objeto_asg'''
+        var_name, obj_name = p[2], p[4]
+        if var_name in self.simbolos:
+            print(f"ERROR[Sem] La re-declaración de la variable {var_name} no está permitida.")
+            return
+        if obj_name not in self.registro:
+            print(f"ERROR[Sem] El objeto {obj_name} no existe.")
+            return
+        
+        # Asignar el objeto vacío
+        propiedades = self.registro[obj_name]
+        valores = []
+        for prop in propiedades:
+            for key, value in prop.items():
+                valores.append({key : (value, None)})
+        self.simbolos[var_name] = valores
+        print(f"Asignacion de objeto vacío {var_name} con valores {self.simbolos[var_name]}")            
+            
+        # Comprobar que los tipos de las propiedades coinciden con las del objeto
+        lista_valores = p[6]
+        print(f"Lista valores: {lista_valores}")
+        for i in range(len(lista_valores)):
+            for key, value in lista_valores[i].items():
+                if key not in propiedades[i]:
+                    print(f"ERROR[Sem] La propiedad {key} no existe en el objeto {obj_name}.")
+                    return
+                if value[0] != propiedades[i][key]:
+                    print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el del objeto {obj_name}.")
+                    return
+        
+        # Asignar los valores al objeto
+        for i in range(len(lista_valores)):
+            for key, value in lista_valores[i].items():
+                self.simbolos[var_name][i][key] = value
+
+        print(f"Asignacion de objeto {var_name} con valores {self.simbolos[var_name]}")
+
         pass
 
     def p_objeto_asg(self, p):
         '''objeto_asg : LLAVEA propiedades_asg LLAVEC'''
+        p[0] = p[2]
         pass
 
     def p_propiedades_asg(self, p):
         '''propiedades_asg : 
                            | propiedad_asg
                            | propiedad_asg COMA propiedades_asg'''
+        if len(p) == 1:
+            p[0] = []
+        elif len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1]] + p[3]
         pass
 
     def p_propiedad_asg(self, p):
         '''propiedad_asg : ID COLON expresion
                          | STRING COLON expresion'''
+        p[0] = {p[1]: (p[3])}
         pass
 
 
