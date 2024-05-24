@@ -329,18 +329,19 @@ class ParserClass:
         pass
 
     def p_declaracion(self, p):
-        '''declaracion : LET lista_id
-                       | LET lista_id EQUAL expresion'''
+        '''declaracion : LET lista_id_otro
+                       | LET lista_id_otro EQUAL expresion'''
 
         if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
-            for id in p[2]:
+            for id, tipo in p[2]:
+                print(f"ID: {id}")
                 if id in self.simbolos or id in self.registro:
                     print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
                 else:
-                    self.simbolos[id] = (None, None)
-                    print(f"Declaracion: {id}")
-            p[0] = ('declaracion', id)
+                    self.simbolos[id] = (tipo, None)
+                    print(f"Declaracion: {id} : {self.simbolos[id]}")
+            p[0] = ('declaracion', p)
         elif len(p) == 5:
             # Verificar l
             for id in p[2]:
@@ -349,6 +350,32 @@ class ParserClass:
                 print(f"Declasign: {id} con valor {p[4]}")
             p[0] = ('declasign', id, p[4])
         
+        pass
+
+    def p_lista_id_otro(self, p):
+        '''lista_id_otro : ID
+                         | ID COMA lista_id_otro'''
+
+        if len(p) == 2:
+            elem = (p[1], None)
+            p[0] = [elem]
+        elif len(p) == 4:
+            elem = (p[1], None)
+            p[0] = [elem] + p[3]
+
+        print("Lista id: ", p[0])
+        pass
+
+    def p_lista_id_otro2(self, p):
+        '''lista_id_otro : ID COLON tipo
+                         | ID COLON tipo COMA lista_id_otro'''
+        if len(p) == 4:
+            elem = (p[1], p[3])
+            p[0] = [elem]
+        elif len(p) == 6:
+            elem = (p[1], p[3])
+            p[0] = [elem] + p[5]
+        print("Lista id: ", p[0])
         pass
 
     def p_lista_id(self, p):
@@ -447,7 +474,7 @@ class ParserClass:
             print(f"ERROR[Sem] El objeto {p[1]} no existe.")
             p[0] = -1
         else:
-            p[0] = self.registro[p[1]]
+            p[0] = p[1]
         print("Tipo obj: ", p[0])
         pass
 

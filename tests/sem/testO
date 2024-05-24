@@ -28,5 +28,8 @@ type Respuesta = { "error" : Error, "resultado" : character, };
 let VAR;
 type VAR = { prop1 : int, }; 
 
+// Creación de múltiples variables en una misma línea
+let v1, v2 : Objeto, v3 : Vacio, v4;
+
 // Asignación de un objeto a una variable
 let mi_objeto : Objeto = { prop1 : 'h', prop2 : 42, prop3 : tr, };
