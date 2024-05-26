@@ -15,6 +15,7 @@ class ParserClass:
         self.registro = {}          # Tabla de registro
         self.local_symbols = {}     # Tabla de símbolos local para funciones
         self.local_aux = {}
+        self.nombre_funcion = None
 
     start = 'axioma'
 
@@ -274,16 +275,13 @@ class ParserClass:
     def p_expresion_identificador(self, p):
         '''expresion : ID'''
         name_var = p[1]
-        print(f"Identificador: {name_var}")
-        print(f"Locales: {self.local_symbols}")
-        print(f"Simbolos: {self.simbolos}")
         
-        if name_var not in self.simbolos and name_var not in self.local_symbols:
+        if name_var not in self.simbolos:
             column = self.find_column(p.lexer.lexdata, p.slice[1])
             print(f"[ERROR][Sem] Variable {name_var} no existe. line: {p.lineno(1)} position: {column}")
             p[0] = None
         else:
-            p[0] = self.simbolos.get(name_var, self.local_symbols.get(name_var))
+            p[0] = self.simbolos[name_var]
             print(f"Valor de la variable {name_var}: {p[0]}")
         pass
 
@@ -492,46 +490,25 @@ class ParserClass:
     # Función
     def p_funcion(self, p):
         '''funcion : FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC'''
-        # Guardar los parámetros en la tabla de símbolos local
+        print(p[7])
+        print(p[11][0])
         
- 
-        print("lista_arg: ", p[4])
-        funcion_nombre = p[2]
-        parametros = p[4]
-        self.local_symbols[funcion_nombre] = parametros
-        print("locales: ", self.local_symbols)
-        if p[11] == None:
-            return_expr = None
-        else:
-            return_type, return_expr = p[7], p[11][0]
-            print(f"Funcion: {p[2]} con tipo {return_type} y retorno {return_expr}")
-            if return_type != return_expr:
-                print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
-            
-        
-        p[0] = ('funcion', p[2], p[4], p[7], p[11])
-
         pass
 
     # La función puede no tener argumentos
-    
     def p_lista_arg(self, p):
         '''lista_arg : 
                      | lista_arg_rec'''
-        if len(p) == 1:
-            p[0] = []
-        else:
-            p[0] = p[1]
-                        
+        p[0] = p[1]
         pass
 
     def p_lista_arg_rec(self, p):
         '''lista_arg_rec : ID COLON tipo
                          | ID COLON tipo COMA lista_arg_rec'''
         if len(p) == 4:
-            p[0] = [(p[1], p[3])]
+            p[0] = [(p[1], p[3])]  # Argumento único
         else:
-            p[0] = [(p[1], p[3])] + p[5]
+            p[0] = [(p[1], p[3])] + p[5]  # Argumento actual + recursión
         pass
     
     def p_function_call(self, p):

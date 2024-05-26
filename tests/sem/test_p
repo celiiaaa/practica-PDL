@@ -1,10 +1,6 @@
 function resta(a: character, b: character): int {
-    let caca = a - b;
-    return caca;
+
+    return 1 + 2;
 }
 
 
-function suma(a: character, b: character): int {
-    let res = a - b;
-    return res;
-}
