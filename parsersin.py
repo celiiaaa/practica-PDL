@@ -14,6 +14,7 @@ class ParserClass:
         self.simbolos = {}          # Tabla de símbolos
         self.registro = {}          # Tabla de registro
         self.local_symbols = {}     # Tabla de símbolos local para funciones
+        self.local_aux = {}
 
     start = 'axioma'
 
@@ -97,12 +98,15 @@ class ParserClass:
             return
         
         if num1[0] == 'bool' or num2[0] == 'bool':
-            print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
+            print(f"ERROR[Sem] {num1[0]} {op} {num2[0]} -> type error.")
             return
         
         
         # JUSTIFICAR SUMAR LOS CHAR
+        print(f"Num1: {num1[0]}")
+        print(f"Num2: {num2[0]}")
         if num1[0] == 'char' or num1[0] == 'character':
+            print(f"Char: {num2[1]}")
             num1 = ('int', ord(num2[1]))
         if num2[0] == 'char' or num2[0] == 'character':
             num2 = ('int', ord(num2[1]))
@@ -142,7 +146,7 @@ class ParserClass:
         # JUSTIFICAR QUE NO SE PUEDEN MULTIPLICAR DOS CHAR
         
         if (num1[0] not in ['int', 'float', 'char'] or num2[0] not in ['int', 'float', 'char']) or (num1[0] == 'char' and num2[0] == 'char'):
-            print(f"ERROR[Sem] {num1[1]} {op} {num2[1]} -> type error.")
+            print(f"ERROR[Sem] {num1[0]} {op} {num2[0]} -> type error.")
             return 
         
         if num1[0] == 'char':
@@ -272,6 +276,8 @@ class ParserClass:
         name_var = p[1]
         print(f"Identificador: {name_var}")
         print(f"Locales: {self.local_symbols}")
+        print(f"Simbolos: {self.simbolos}")
+        
         if name_var not in self.simbolos and name_var not in self.local_symbols:
             column = self.find_column(p.lexer.lexdata, p.slice[1])
             print(f"[ERROR][Sem] Variable {name_var} no existe. line: {p.lineno(1)} position: {column}")
@@ -331,22 +337,25 @@ class ParserClass:
     def p_declaracion(self, p):
         '''declaracion : LET lista_id_otro
                        | LET lista_id_otro EQUAL expresion'''
-
+        
         if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
             for id, tipo in p[2]:
-                print(f"ID: {id}")
                 if id in self.simbolos or id in self.registro:
                     print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
                 else:
                     self.simbolos[id] = (tipo, None)
+                    
                     print(f"Declaracion: {id} : {self.simbolos[id]}")
             p[0] = ('declaracion', p)
         elif len(p) == 5:
             # Verificar l
+            
             for id in p[2]:
+                print("id0", id[0])
                 # Asignar el tipo del valor asignado a la variable.
                 self.simbolos[id] = p[4]
+                
                 print(f"Declasign: {id} con valor {p[4]}")
             p[0] = ('declasign', id, p[4])
         
@@ -485,12 +494,21 @@ class ParserClass:
         '''funcion : FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC'''
         # Guardar los parámetros en la tabla de símbolos local
         
-        return_type, return_expr = p[7], p[11][0]
-        print(f"Funcion: {p[2]} con tipo {return_type} y retorno {return_expr}")
-        if return_type != return_expr:
-            print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
+ 
+        print("lista_arg: ", p[4])
+        funcion_nombre = p[2]
+        parametros = p[4]
+        self.local_symbols[funcion_nombre] = parametros
+        print("locales: ", self.local_symbols)
+        if p[11] == None:
+            return_expr = None
+        else:
+            return_type, return_expr = p[7], p[11][0]
+            print(f"Funcion: {p[2]} con tipo {return_type} y retorno {return_expr}")
+            if return_type != return_expr:
+                print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
+            
         
-        self.local_symbols = {}
         p[0] = ('funcion', p[2], p[4], p[7], p[11])
 
         pass
@@ -504,19 +522,7 @@ class ParserClass:
             p[0] = []
         else:
             p[0] = p[1]
-            for id in p[1]:           
-                if id in self.local_symbols:
-                    print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
-                else:
-                    if id[1] == 'int':
-                        self.local_symbols[id[0]] = (id[1], 0)
-                    elif id[1] == 'float':
-                        self.local_symbols[id[0]] = (id[1], 0.0)
-                    elif id[1] == 'character':
-                        self.local_symbols[id[0]] = (id[1], '0')
-                    elif id[1] == 'boolean':
-                        self.local_symbols[id[0]] = (id[1], False)
-                    
+                        
         pass
 
     def p_lista_arg_rec(self, p):
@@ -530,6 +536,16 @@ class ParserClass:
     
     def p_function_call(self, p):
         '''function_call : ID PARENTHESISOPEN lista_param PARENTHESISCLOSE'''
+        print(f"Funcion llamada: {p[1]} con parametros {p[3]}")
+        print(self.local_aux)
+        i = 0
+        for valor in self.local_aux.values():
+            print(p[3][i])
+            if valor[0] != p[3][i][0] or len(p[3]) != len(self.local_aux):
+                print(f"ERROR[Sem] Los argumentos no coinciden con los parámetros de la función {p[1]}.")
+                return
+            i += 1
+        
         pass
 
     # Como los argumentos pueden ser vacíos, se define así
@@ -537,17 +553,27 @@ class ParserClass:
     def p_lista_param(self, p):
         '''lista_param : 
                        | lista_param_rec'''
+        if len(p) == 1:
+            p[0] = []
+        else:
+            p[0] = p[1]
         pass
 
     def p_lista_param_rec(self, p):
         '''lista_param_rec : expresion COMA lista_param_rec
                            | expresion'''
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1]] + p[3]
+        
         pass
 
     # OBJETOS AJSON
 
     def p_declaracion_objeto(self, p):
         '''declaracion_objeto : TYPE ID EQUAL objeto_dec'''
+        
         
         if p[2] in self.registro:
             print(f"ERROR[Sem] El objeto {p[2]} ya existe.")
@@ -561,6 +587,7 @@ class ParserClass:
                 self.registro[p[2]] = {}
                 print(f"Declaracion de objeto: {p[2]} con propiedades vacías.")
             elif p[4][0] != -1:
+                
                 self.registro[p[2]] = p[4]
                 print(f"Declaracion de objeto: {p[2]} con propiedades {p[4]}")
         pass
@@ -568,6 +595,7 @@ class ParserClass:
     def p_objeto_dec(self, p):
         '''objeto_dec : LLAVEA propiedades_dec LLAVEC'''
         p[0] = p[2]
+        
         pass
 
     def p_propiedades_dec(self, p):
