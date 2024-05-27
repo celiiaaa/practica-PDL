@@ -73,7 +73,8 @@ class ParserClass:
     # Ya que en JS se acepta una expresion, se implementa que también se permita aqui.
 
     def p_expresion(self, p):
-        '''expresion : binaria
+        '''expresion : literal
+                     | binaria
                      | unaria
                      | PARENTHESISOPEN expresion PARENTHESISCLOSE'''
         if len(p) == 4:
@@ -100,7 +101,6 @@ class ParserClass:
         if num1[0] == 'bool' or num2[0] == 'bool':
             print(f"ERROR[Sem] {num1[0]} {op} {num2[0]} -> type error.")
             return
-        
         
         # JUSTIFICAR SUMAR LOS CHAR
         print(f"Num1: {num1[0]}")
@@ -270,8 +270,8 @@ class ParserClass:
 
     # No se puede aceptar una asignacion if (char == 'a' && i = (4 + 5))    // "i ="
 
-    def p_expresion_identificador(self, p):
-        '''expresion : ID'''
+    def p_literal_identificador(self, p):
+        '''literal : ID'''
         name_var = p[1]
         if name_var not in self.simbolos and name_var not in self.local_aux:
             column = self.find_column(p.lexer.lexdata, p.slice[1])
@@ -282,72 +282,80 @@ class ParserClass:
             print(f"Valor de la variable {name_var}: {p[0]}")
         pass
 
-    def p_expresion_entero(self, p):
-        '''expresion : ENTERO
-                     | BIN
-                     | OCT
-                     | HEX'''
+    def p_literal_entero(self, p):
+        '''literal : ENTERO
+                   | BIN
+                   | OCT
+                   | HEX'''
         p[0] = ('int', p[1])
         pass
 
-    def p_expresion_real(self, p):
-        '''expresion : REAL
-                     | NCIENT'''
+    def p_literal_real(self, p):
+        '''literal : REAL
+                   | NCIENT'''
         p[0] = ('float', p[1])
         pass
     
-    def p_expresion_char(self, p):
-        '''expresion : CHAR'''
+    def p_literal_char(self, p):
+        '''literal : CHAR'''
         p[0] = ('char', p[1])
         pass
 
-    def p_expresion_bool(self, p):
-        '''expresion : TR
-                     | FL'''
+    def p_literal_bool(self, p):
+        '''literal : TR
+                   | FL'''
         p[0] = ('bool', p[1])
         pass
 
-    def p_expresion_nulo(self, p):
-        '''expresion : NULL'''
-        p[0] = (None, None)
+    def p_literal_nulo(self, p):
+        '''literal : NULL'''
+        p[0] = ('nulo', None)
         pass
 
-    def p_expresion_otra(self, p):
-        '''expresion : function_call
-                     | acceso_propiedad
-                     | objeto_asg'''
-        
-        p[0] = p[1]
+    def p_literal_objeto(self, p):
+        '''expresion : objeto_asg'''
+        p[0] = ('obj_asg', p[1])
         
         pass
 
+    def p_literal_acceso(self, p):
+        '''expresion : acceso_obj'''
+        p[0] = ('propiedad', p[1])
+        pass
+
+    def p_literal_llamada(self, p):
+        '''expresion : function_call'''
+        p[0] = ('funcion', p[1])
+        pass
+
+    # Acceso a la propiedad de un objeto
     def p_acceso_propiedad(self, p):
         '''acceso_propiedad : ID DOT ID acceso_propiedad_rec
                             | ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec'''
-        print("registro", self.registro)
-        if len(p) == 5:
-            if p[2] == '.':
-                p[0] = ('acceso_propiedad', p[1], [p[3]] + p[4])
-            else:
-                p[0] = ('acceso_propiedad', p[1], [p[3]] + p[5])
         pass
-        
+
     def p_acceso_propiedad_rec(self, p):
         '''acceso_propiedad_rec : 
                                 | DOT ID acceso_propiedad_rec
                                 | BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec'''
-        if len(p) == 1:
-            p[0] = []
-        elif len(p) == 4 and p[1] == '.':
-            p[0] = [p[2]] + p[3]
-        else:
-            p[0] = [p[2]] + p[4]
-        
+        pass
+    
+    # Acceso al valor de una propiedad de un objeto
+    def p_acceso_obj(self, p):
+        '''acceso_obj : ID DOT ID acceso_obj_rec
+                      | ID BRACKETOPEN STRING BRACKETCLOSE acceso_obj_rec'''
         pass
 
+    def p_acceso_obj_rec(self, p):
+        '''acceso_obj_rec : 
+                          | DOT ID acceso_obj_rec
+                          | BRACKETOPEN STRING BRACKETCLOSE acceso_obj_rec'''
+        pass
+
+    # Declaración
     def p_declaracion(self, p):
-        '''declaracion : LET lista_id_otro
-                       | LET lista_id_otro EQUAL expresion'''
+        '''declaracion : LET lista_id
+                       | LET lista_id_mas EQUAL expresion'''
 
         if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
@@ -372,9 +380,11 @@ class ParserClass:
         
         pass
 
-    def p_lista_id_otro(self, p):
-        '''lista_id_otro : ID
-                         | ID COMA lista_id_otro'''
+    # Lista de identificadores para la declaración
+    def p_lista_id(self, p):
+        '''lista_id : ID
+                    | ID COMA lista_id'''
+        pass
 
         if len(p) == 2:
             elem = (p[1], None)
@@ -386,9 +396,9 @@ class ParserClass:
         print("Lista id: ", p[0])
         pass
 
-    def p_lista_id_otro2(self, p):
-        '''lista_id_otro : ID COLON tipo
-                         | ID COLON tipo COMA lista_id_otro'''
+    def p_lista_id2(self, p):
+        '''lista_id : ID COLON ID
+                    | ID COLON ID COMA lista_id'''
         if len(p) == 4:
             elem = (p[1], p[3])
             p[0] = [elem]
@@ -398,17 +408,27 @@ class ParserClass:
         print("Lista id: ", p[0])
         pass
 
-    def p_lista_id(self, p):
-        '''lista_id : ID
-                    | ID COMA lista_id'''
+    # Lista de identificadores para la asignación
+    def p_lista_id_mas(self, p):
+        '''lista_id_mas : ID
+                        | ID COMA lista_id_mas'''
         if len(p) == 2:
             p[0] = [p[1]]
         else:
             p[0] = [p[1]] + p[3]
         pass
 
+    def p_lista_id_mas2(self, p):
+        '''lista_id_mas : acceso_propiedad
+                        | acceso_propiedad COMA lista_id_mas'''
+        if len(p) == 2:
+            p[0] = (p[1])
+        else:
+            p[0] = (p[1]) + p[3]
+        pass
+
     def p_asignacion(self, p):
-        '''asignacion : lista_id EQUAL expresion'''
+        '''asignacion : lista_id_mas EQUAL expresion'''
 
         for id in p[1]:
             if id not in self.simbolos and id not in self.local_aux:
@@ -422,7 +442,6 @@ class ParserClass:
 
     # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
 
-    # Hay un if / if – else.
     # Condición
     def p_condicion(self, p):
         '''condicion : IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion'''
@@ -447,9 +466,9 @@ class ParserClass:
                           | ELSE bloque_llaves'''
         
         if len(p) > 1:
-            p[0] = p[2]  # Si existe el bloque else, se asigna
+            p[0] = p[2]
         else:
-            p[0] = None  # No hay bloque else
+            p[0] = None
 
         pass
 
@@ -478,6 +497,7 @@ class ParserClass:
                 | FLOAT
                 | CHARACTER
                 | BOOLEAN'''
+        
         tipo = p[1]
         if p[1] == 'character':
             tipo = 'char'
@@ -550,9 +570,9 @@ class ParserClass:
         '''lista_arg_rec : ID COLON tipo
                          | ID COLON tipo COMA lista_arg_rec'''
         if len(p) == 4:
-            p[0] = [(p[1], p[3])]  # Argumento único
+            p[0] = [(p[1], p[3])]
         else:
-            p[0] = [(p[1], p[3])] + p[5]  # Argumento actual + recursión
+            p[0] = [(p[1], p[3])] + p[5]
         pass
     
     def p_function_call(self, p):
@@ -577,7 +597,6 @@ class ParserClass:
             if parametro_llamada[0] != arg_type:
                 print(f"ERROR[Sem] El argumento {parametro_llamada[1]} de tipo {parametro_llamada[0]} no coincide con el tipo del parámetro {arg_name} de tipo {arg_type}.")
                 return
-        
         
         if self.valor_retorno[funcion_nombre] == 'char':
             p[0] = (self.valor_retorno[funcion_nombre], '0')
@@ -616,13 +635,14 @@ class ParserClass:
     def p_declaracion_objeto(self, p):
         '''declaracion_objeto : TYPE ID EQUAL objeto_dec'''
         
-        
         if p[2] in self.registro:
             print(f"ERROR[Sem] El objeto {p[2]} ya existe.")
             return
-        if p[2] in self.simbolos:
+        
+        # CREO QUE ESTO NO ES NECESARIO, ya que no son variables, son tipos de objetos AJSON.
+        """ if p[2] in self.simbolos:
             print(f"ERROR[Sem] La re-declaración de la variable {p[2]} no está permitida.")
-            return
+            return """
         
         if len(p) == 5:
             if p[4] == []:
