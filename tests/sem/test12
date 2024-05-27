@@ -1,24 +1,11 @@
-/* Funciones */
-
-let a = 'a' < 8; // se puede hacer 1 + 'a' pero no 'a' + 1!!!!
-
-
-
-function suma(a: int, b: int): int {
-    let res = a + b;
-    return res;
-}
+/* Funciones con objetos */
 
 type Point = {x: int, y: int};
 function get_point_after_jump(point: Point): Point {
     return point;
 }
 
-function resta(a: character, b: character): int {
-    let caca = a - b;
-    return caca;
+type Point = {x: int, y: int};
+function get_point_after_jump(point: Point): Point {
+    return {x: 1, y: point.y + 10};
 }
-
-let suma2 = suma(1, 9, 0);
-let suma3 = resta(1, 2.0);
-let suma4 = suma(1, 9);

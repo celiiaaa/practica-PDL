@@ -1,6 +1,32 @@
-function resta(a: character, b: character): int {
-
-    return 1 + 2;
+function resta(a: int, b: character): character {
+    let res = a + a;
+    return 'a';
 }
 
+function suma(a: int, b: int): int {
+    let fuga = 1 * 2;
+    return fuga;
+}
+
+function mod(a: int, b: int): int {
+    while (a >= b) {
+        a = a - b;
+    }
+    return a;
+}
+
+function greatest_common_divisor(a: int, b: int): int {
+    let temp;
+    while (!(b == 0)) {
+        temp = b;
+        b = mod(a, b);
+        a = temp;
+    }
+    return a;
+}
+
+
+let nada = null;
+let suma2 = suma(1, 9, 0);
+let rest = resta(1, 'a');
 
