@@ -130,11 +130,33 @@ class ParserClass:
     def p_asignacion(self, p):
         '''asignacion : lista_id_mas EQUAL expresion'''
         for id in p[1]:
-            if id not in self.simbolos and id not in self.local_aux:
-                print(f"ERROR[Sem] La variable {id} no existe. line: {p.lexpos(1)}")
+            if isinstance(id, tuple):
+                dic = self.simbolos.get(id[0], self.local_aux.get(id[0]))[1]
+                valor_actual = dic
+                lista = id[1:]
+                for clave in lista[:-1]:
+                    if clave in dic:
+                        valor_actual = dic[clave]
+                    else:
+                        print(f"ERROR[Sem] La propiedad {clave} no existe en el objeto {id[0]}.")
+                        p[0] = ('asignacion', None)
+                        return
+                if lista[-1] in dic:
+                    if dic[lista[-1]][0] != p[3][0]:
+                        print(f"ERROR[Sem] El tipo de la propiedad {lista[-1]} no coincide con el tipo de la asignación.")
+                        p[0] = ('asignacion', None)
+                        return
+                    valor_actual[lista[-1]] = p[3]
+                else:
+                    print(f"ERROR[Sem] La propiedad {lista[-1]} no existe en el objeto {id[0]}.")
+                    p[0] = ('asignacion', None)
+                    return
             else:
-                self.simbolos[id] = p[3]
-                # print(f"Asignacion: {id} con valor {p[3]}")
+                if id not in self.simbolos and id not in self.local_aux:
+                    print(f"ERROR[Sem] La variable {id} no existe.")
+                else:
+                    self.simbolos[id] = p[3]
+                    # print(f"Asignacion: {id} con valor {p[3]}")
         p[0] = ('asignacion', p[1], p[3])
         pass
 
@@ -152,9 +174,9 @@ class ParserClass:
         '''lista_id_mas : acceso_propiedad
                         | acceso_propiedad COMA lista_id_mas'''
         if len(p) == 2:
-            p[0] = (p[1])
+            p[0] = [(p[1])]
         else:
-            p[0] = (p[1]) + p[3]
+            p[0] = [(p[1])] + p[3]
         pass
 
     # ------------------- EXPRESIONES -------------------
@@ -423,7 +445,7 @@ class ParserClass:
         lista = p[1][1:]
         val = dic
         for clave in lista:
-            if clave in lista:
+            if clave in dic:
                 val = dic[clave]
             else:
                 print(f"ERROR[Sem] La propiedad {clave} no existe en el objeto {name_var}.")
@@ -739,9 +761,9 @@ class ParserClass:
         '''acceso_propiedad : ID DOT ID acceso_propiedad_rec
                             | ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec'''
         if len(p) == 5:
-            p[0] = [p[1], p[3]] + p[4]
+            p[0] = (p[1], p[3]) + p[4]
         elif len(p) == 6:
-            p[0] = [p[1], p[3]] + p[5]
+            p[0] = (p[1], p[3]) + p[5]
         pass
 
     def p_acceso_propiedad_rec(self, p):
@@ -749,11 +771,11 @@ class ParserClass:
                                 | DOT ID acceso_propiedad_rec
                                 | BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec'''
         if len(p) == 1:
-            p[0] = []
+            p[0] = ()
         elif len(p) == 4:
-            p[0] = [p[2]] + p[3]
+            p[0] = (p[2]) + p[3]
         elif len(p) == 5:
-            p[0] = [p[2]] + p[4]
+            p[0] = (p[2]) + p[4]
         pass
     
     # Acceso al valor de una propiedad de un objeto
