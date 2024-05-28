@@ -670,6 +670,20 @@ class ParserClass:
             p[0] = [p[1]]
         else:
             p[0] = [p[1]] + p[3]
+        
+        """dic = {}
+        if len(p) == 1:
+            p[0] = {}
+        elif len(p) == 2:
+            dic[p[1][0]] = p[1][1]
+            p[0] = dic
+        else:
+            dic[p[1][0]] = p[1][1]
+            p[0] = dic
+
+            p[0] = [p[1]] + p[3]
+        pass"""
+
         pass
 
     def p_propiedad_dec(self, p):
@@ -697,16 +711,13 @@ class ParserClass:
         if obj_name not in self.registro:
             print(f"ERROR[Sem] El objeto {obj_name} no existe.")
             return
-        
-        # Asignar el objeto vacío
+        # Asignar las propiedades al objeto
         propiedades = self.registro[obj_name]
         valores = []
         for prop in propiedades:
             for key, value in prop.items():
                 valores.append({key : (value, None)})
         self.simbolos[var_name] = valores
-        print(f"Asignacion de objeto vacío {var_name} con valores {self.simbolos[var_name]}")            
-            
         # Comprobar que los tipos de las propiedades coinciden con las del objeto
         lista_valores = p[6]
         print(f"Lista valores: {lista_valores}")
@@ -718,13 +729,8 @@ class ParserClass:
                 if value[0] != propiedades[i][key]:
                     print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el del objeto {obj_name}.")
                     return
-                
         # Asignar las propiedades al objeto
         self.simbolos[var_name] = (obj_name, lista_valores)
-        # Asignar los valores al objeto
-        """ for i in range(len(lista_valores)):
-            for key, value in lista_valores[i].items():
-                self.simbolos[var_name][i][key] = value """
 
         print(f"Asignacion de objeto {var_name} con valores {self.simbolos[var_name]}")
 
@@ -830,6 +836,8 @@ class ParserClass:
         print("Registro: ")
         for key, value in self.registro.items():
             print(f"\t{key} : {value}")
+        print("Diccionario")
+        print(self.registro)
 
     def find_column(self, input, token):
         line_start = input.rfind('\n', 0, token.lexpos) + 1

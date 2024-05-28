@@ -33,3 +33,15 @@ let v1, v2 : Objeto, v3 : Vacio, v4;
 
 // Asignación de un objeto a una variable
 let mi_objeto : Objeto = { prop1 : 'h', prop2 : 42, prop3 : tr, };
+
+// Asignación de un objeto a una variable con un tipo incorrecto
+let mi_objeto2 : Objeto = { prop1 : 'h', prop2 : 42, prop3 : 42, };
+
+// Asignación de un objeto a una variable con una propiedad incorrecta
+let mi_objeto3 : Objeto = { prop1 : 'h', prop2 : 42, inventada : tr, };
+
+// Asignación de un objeto a una variable con una propiedad de más
+let mi_objeto4 : Objeto = { prop1 : 'h', prop2 : 42, prop3 : tr, prop4 : 123, };
+
+// Acceso a las propiedades de un objeto
+let propiedad1 = mi_objeto.prop1;

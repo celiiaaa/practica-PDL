@@ -52,6 +52,11 @@ class ParserClass:
     def p_bloque_programa(self, p):
         '''bloque_programa : sentencia
                            | sentencia bloque_programa'''
+        # print("Bloque programa: ", p[1])
+        """ if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = p[1] + p[2] """
         pass
 
     # Sentencia
@@ -64,34 +69,95 @@ class ParserClass:
                      | condicion
                      | bucle
                      | funcion'''
+        p[0] = p[1]
+        # print("Sentencia: ", p[0])
         pass
+
+    # ------------------- DECLARACIONES Y ASIGNACIONES -------------------
+
+    # SE PERMITE concaternar variables de tipo basico (int, float, char, bool) con variables de tipo complejo (AJSON)
+    # PERO NO al asignar mientras se declara
 
     # Declaración
     def p_declaracion(self, p):
         '''declaracion : LET lista_id
                        | LET lista_id_mas EQUAL expresion'''
+        if len(p) == 3:
+            # Actualizar la tabla de simbolos con nuevas variables
+            for id, tipo in p[2]:
+                if id in self.simbolos or id in self.registro:
+                    print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
+                else:
+                    self.simbolos[id] = (tipo, None)
+                    # print(f"Declaracion: {id} : {self.simbolos[id]}")
+            p[0] = ('declaracion', p[2])
+        elif len(p) == 5:
+            # Verificar l        
+            for id in p[2]:
+                # Asignar el tipo del valor asignado a la variable.
+                self.simbolos[id] = p[4]
+                self.local_aux[id[0]] = p[4]
+                # print(f"Declasign: {id} con valor {p[4]}")
+            p[0] = ('declasign', p[2], p[4])
         pass
 
     # Lista de identificadores para la declaración
     def p_lista_id(self, p):
         '''lista_id : ID
-                    | ID COMA lista_id
-                    | ID COLON ID
+                    | ID COMA lista_id'''
+        if len(p) == 2:
+            elem = (p[1], None)
+            p[0] = [elem]
+        elif len(p) == 4:
+            elem = (p[1], None)
+            p[0] = [elem] + p[3]
+        # print("Lista id: ", p[0])
+        pass
+
+    def p_lista_id2(self, p):
+        '''lista_id : ID COLON ID
                     | ID COLON ID COMA lista_id'''
+        if len(p) == 4:
+            elem = (p[1], p[3])
+            p[0] = [elem]
+        elif len(p) == 6:
+            elem = (p[1], p[3])
+            p[0] = [elem] + p[5]
+        # print("Lista id: ", p[0])
         pass
 
     # Asignación
     def p_asignacion(self, p):
         '''asignacion : lista_id_mas EQUAL expresion'''
+        for id in p[1]:
+            if id not in self.simbolos and id not in self.local_aux:
+                print(f"ERROR[Sem] La variable {id} no existe. line: {p.lexpos(1)}")
+            else:
+                self.simbolos[id] = p[3]
+                # print(f"Asignacion: {id} con valor {p[3]}")
+        p[0] = ('asignacion', p[1], p[3])
         pass
 
     # Lista de identificadores para la asignación
     def p_lista_id_mas(self, p):
         '''lista_id_mas : ID
-                        | ID COMA lista_id_mas
-                        | acceso_propiedad
-                        | acceso_propiedad COMA lista_id_mas'''
+                        | ID COMA lista_id_mas'''
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1]] + p[3]
         pass
+
+    def p_lista_id_mas2(self, p):
+        '''lista_id_mas : acceso_propiedad
+                        | acceso_propiedad COMA lista_id_mas'''
+        if len(p) == 2:
+            p[0] = (p[1])
+        else:
+            p[0] = (p[1]) + p[3]
+        pass
+
+    # ------------------- EXPRESIONES -------------------
 
     # Expresión
     def p_expresion(self, p):
@@ -99,168 +165,599 @@ class ParserClass:
                      | unaria
                      | termino
                      | PARENTHESISOPEN expresion PARENTHESISCLOSE'''
+        if len(p) == 4:
+            p[0] = p[2]
+        else:
+            p[0] = p[1]
+        # print("Expresión: ", p[0])
         pass
 
-    def p_binaria(self, p):
+    def p_binaria_aritmetica1(self, p):
         '''binaria : expresion PLUS expresion
-                   | expresion MINUS expresion
-                   | expresion TIMES expresion
-                   | expresion DIV expresion
-                   | expresion EQ expresion
-                   | expresion LT expresion
+                   | expresion MINUS expresion'''
+        num1, op, num2 = p[1], p[2], p[3]
+        if num1 is None or num2 is None:
+            print("ERROR[Sem] No se puede realizar la operación.")
+            return
+        tipos = ['int', 'float', 'char']
+        if num1[0] not in tipos or num2[0] not in tipos:
+            print(f"ERROR[Sem] La operacion {num1[0]} {op} {num2[0]} no es válida.")
+            p[0] = None
+        else:
+            if num1[0] == num2[0] == 'char':
+                a = ord(num1[1])
+                b = ord(num2[1])
+                if op == '+':
+                    try:
+                        p[0] = ('char', chr(a + b))
+                    except:
+                        print(f"ERROR[Sem] La suma de los caracteres {num1[1]} y {num2[1]} no es posible.")
+                        p[0] = None
+                elif op == '-':
+                    try:
+                        p[0] = ('char', chr(a - b))
+                    except:
+                        print(f"ERROR[Sem] La resta de los caracteres {num1[1]} y {num2[1]} no es posible.")
+                        p[0] = None
+            else:
+                if num1[0] != num2[0]:
+                    if num1[0] == 'char':
+                        num1 = ('int', ord(num1[1]))
+                    elif num2[0] == 'char':
+                        num2 = ('int', ord(num2[1]))
+                    # Operar
+                    res = num1[1] + num2[1] if op == '+' else num1[1] - num2[1]
+                    p[0] = ('int', res) if res.is_integer() else ('float', res)
+
+            # Cast de char a int
+            """ if num1[0] == 'char':
+                num1 = ('int', ord(num2[1]))
+
+            elif num2[0] == 'char':
+                num2 = ('int', ord(num1[1])) """
+            # Cast de int a float
+            """ if num1[0] != num2[0]:
+                if num1[0] == 'int':
+                    num1 = ('float', float(num1[1]))
+                elif num2[0] == 'int':
+                    num2 = ('float', float(num2[1])) """
+            # Operar
+            """ if (num1[0] != num2[0]) or (num1[0] == num2[0] == 'float'):
+                if op == '+':
+                    p[0] = ('float', num1[1] + num2[1])
+                elif op == '-':
+                    p[0] = ('float', num1[1] - num2[1])
+            elif num1[0] == num2[0] == 'int':
+                if op == '+':
+                    p[0] = ('int', num1[1] + num2[1])
+                elif op == '-':
+                    p[0] = ('int', num1[1] - num2[1]) """
+        pass
+
+    def p_binaria_aritmetica2(self, p):
+        '''binaria : expresion TIMES expresion
+                   | expresion DIV expresion'''
+        num1, op, num2 = p[1], p[2], p[3]
+        if num1 is None or num2 is None:
+            print("ERROR[Sem] No se puede realizar la operación.")
+            p[0] = None
+            return
+        tipos = ['int', 'float']
+        if num1[0] not in tipos or num2[0] not in tipos:
+            print(f"ERROR[Sem] La operacion {num1[0]} {op} {num2[0]} no es válida.")
+            p[0] = None
+        else:
+            # Cast int a float
+            """ if num1[0] != num2[0]:
+                if num1[0] == 'int':
+                    num1 = ('float', float(num1[1]))
+                elif num2[0] == 'int':
+                    num2 = ('float', float(num2[1])) """
+            # Operar
+            if (num1[0] != num2[0]) or (num1[0] == num2[0] == 'float'):
+                if op == '*':
+                    p[0] = ('float', num1[1] * num2[1])
+                elif op == '/':
+                    p[0] = ('float', num1[1] / num2[1])
+            elif num1[0] == num1[0] == 'int':
+                if op == '*':
+                    p[0] = ('int', num1[1] * num2[1])
+                elif op == '/':
+                    p[0] = ('int', num1[1] / num2[1])
+        pass
+
+    def p_binaria_booleana1(self, p):
+        '''binaria : expresion LT expresion
                    | expresion GT expresion
                    | expresion LE expresion
-                   | expresion GE expresion
-                   | expresion CONJUNCTION expresion
+                   | expresion GE expresion'''
+        num1, op, num2 = p[1], p[2], p[3]
+        if num1 is None or num2 is None:
+            print("ERROR[Sem] No se puede realizar la operación.")
+            p[0] = None
+            return
+        tipos = ['int', 'float', 'char']
+        if num1[0] not in tipos or num2[0] not in tipos:
+            print(f"ERROR[Sem] La operacion {num1[0]} {op} {num2[0]} no es válida.")
+            p[0] = None
+        else:
+            # Cast de char a int
+            if num1[0] == 'char':
+                num1 = ('int', ord(num2[1]))
+            elif num2[0] == 'char':
+                num2 = ('int', ord(num1[1]))
+            # Cast de int a float
+            """ if num1[0] != num2[0]:
+                if num1[0] == 'int':
+                    num1 = ('float', float(num1[1]))
+                elif num2[0] == 'int':
+                    num2 = ('float', float(num2[1])) """
+            # Operar
+            if op == '<':
+                p[0] = ('bool', num1[1] < num2[1])
+            elif op == '>':
+                p[0] = ('bool', num1[1] > num2[1])
+            elif op == '<=':
+                p[0] = ('bool', num1[1] <= num2[1])
+            elif op == '>=':
+                p[0] = ('bool', num1[1] >= num2[1])
+        pass
+
+    def p_binaria_booleana2(self, p):
+        '''binaria : expresion EQ expresion'''
+        num1, op, num2 = p[1], p[2], p[3]
+        if num1 is None or num2 is None:
+            print("ERROR[Sem] No se puede realizar la operación.")
+            p[0] = None
+            return
+        tipos = ['int', 'float', 'char', 'bool']
+        if num1[0] not in tipos or num2[0] not in tipos:
+            print(f"ERROR[Sem] La operacion {num1[0]} {op} {num2[0]} no es válida.")
+            p[0] = None
+        # Si uno de los dos es booleano y el otro no
+        elif num1[0] != num2[0] and (num1[0] == 'bool' or num2[0] == 'bool'):
+            print(f"ERROR[Sem] La operacion {num1[0]} {op} {num2[0]} no es válida.")
+            p[0] = None
+        else:
+            # Cast de char a int
+            if num1[0] == 'char':
+                num1 = ('int', ord(num2[1]))
+            elif num2[0] == 'char':
+                num2 = ('int', ord(num1[1]))
+            # Cast de int a float
+            """ if num1[0] != num2[0]:
+                if num1[0] == 'int':
+                    num1 = ('float', float(num1[1]))
+                elif num2[0] == 'int':
+                    num2 = ('float', float(num2[1])) """
+            # Operar
+            if op == '==':
+                p[0] = ('bool', num1[1] == num2[1])
+        pass
+
+    def p_binaria_conjunto(self, p):
+        '''binaria : expresion CONJUNCTION expresion
                    | expresion DISJUNCTION expresion'''
+        num1, op, num2 = p[1], p[2], p[3]
+        if num1 is None or num2 is None:
+            print("ERROR[Sem] No se puede realizar la operación.")
+            p[0] = None
+            return
+        if num1[0] != 'bool' or num2[0] != 'bool':
+            print(f"ERROR[Sem] La operacion {num1[0]} {op} {num2[0]} no es válida.")
+            p[0] = None
+        else:
+            # Operar
+            if op == '&&':
+                p[0] = ('bool', num1[1] and num2[1])
+            elif op == '||':
+                p[0] = ('bool', num1[1] or num2[1])
         pass
 
     def p_unaria(self, p):
         '''unaria : MINUS expresion %prec UMINUS
                   | PLUS expresion %prec UPLUS
                   | NEG expresion'''
+        op, num = p[1], p[2]
+        if num is None:
+            print("ERROR[Sem] No se puede realizar la operación.")
+            return
+        if op == '+':
+            p[0] = (num[0], +num[1])
+        elif op == '-':
+            p[0] = (num[0], -num[1])
+        elif op == '!':
+            if num[0] != 'bool':
+                print(f"ERROR[Sem] La expresión {num[1]} no permite el operador not.")
+                p[0] = None
+            else:
+                p[0] = (num[0], not num[1])
         pass
 
     # Término
-    def p_termino(self, p):
-        '''termino : ID
-                   | ENTERO
+    def p_termino_identificador(self, p):
+        '''termino : ID'''
+        if p[1] not in self.simbolos and p[1] not in self.local_aux:
+            column = self.find_column(p.lexer.lexdata, p.slice[1])
+            print(f"[ERROR][Sem] Variable {p[1]} no existe. line: {p.lineno(1)} position: {column}")
+            p[0] = None
+        else:
+            p[0] = self.simbolos.get(p[1], self.local_aux.get(p[1]))
+            print(f"Valor de la variable {p[1]}: {p[0]}")
+        pass
+
+    def p_termino_entero(self, p):
+        '''termino : ENTERO
                    | BIN
                    | OCT
-                   | HEX
-                   | REAL
-                   | NCIENT
-                   | CHAR
-                   | TR
-                   | FL
-                   | NULL
-                   | acceso_obj
-                   | funcion_call
-                   | objeto_asg'''
+                   | HEX'''
+        p[0] = ('int', p[1])
         pass
+
+    def p_termino_real(self, p):
+        '''termino : REAL
+                   | NCIENT'''
+        p[0] = ('float', p[1])
+        pass
+
+    def p_termino_caracter(self, p):
+        '''termino : CHAR'''
+        p[0] = ('char', p[1])
+        pass
+
+    def p_termino_booleano(self, p):
+        '''termino : TR
+                   | FL'''
+        p[0] = ('bool', p[1])
+        pass
+
+    def p_termino_nulo(self, p):
+        '''termino : NULL'''
+        p[0] = ('null', None)
+        pass
+
+    def p_termino_propiedad(self, p):
+        '''termino : acceso_propiedad'''
+        name_var = p[1][0]
+        dic  = self.simbolos.get(name_var, self.local_aux.get(name_var))[1]
+        lista = p[1][1:]
+        val = dic
+        for clave in lista:
+            if clave in lista:
+                val = dic[clave]
+            else:
+                print(f"ERROR[Sem] La propiedad {clave} no existe en el objeto {name_var}.")
+                p[0] = None
+                return
+        p[0] = val
+        pass
+
+    def p_termino_llamada(self, p):
+        '''termino : funcion_call'''
+        p[0] = p[1]
+        pass
+
+    def p_termino_objeto(self, p):
+        '''termino : objeto_asg'''
+        p[0] = ('obj', p[1])
+        pass
+
+    # ------------------- CONDICIONALES Y BUCLES -------------------
+
+    # SE VERIFICA QUE
+    # Las expresiones entre parentesis de condiciones y bucles son obligatorias, no pueden ser vacias!
+    # El tipo de las expresiones en las condiciones y bucles solo pueden ser booleanos!
 
     # Condición
     def p_condicion(self, p):
         '''condicion : IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion'''
+        valor_cond = p[3]
+        if valor_cond[0] != 'bool':
+            print("ERRROR[Sem] La condicion del if solo permite expresiones de tipo booleano.")
+
+        p[0] = ('if', p[3], p[5], p[6])
         pass
 
     def p_otra_condicion(self, p):
-        '''otra_condicion : ELSE bloque_llaves
-                          | '''
+        '''otra_condicion :
+                          | ELSE bloque_llaves'''
+        if len(p) == 1:
+            p[0] = None
+        elif len(p) == 3:
+            p[0] = p[2]
         pass
 
     # Bucle
     def p_bucle(self, p):
         '''bucle : WHILE PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves'''
+        valor_cond = p[3]
+        if valor_cond[0] != 'bool':
+            print("ERRROR[Sem] La condicion del bucle while solo permite expresiones de tipo booleano.")
         pass
 
     # Bloque de llaves
     def p_bloque_llaves(self, p):
         '''bloque_llaves : LLAVEA bloque_programa LLAVEC'''
+        p[0] = p[2]
         pass
+
+    # ------------------- FUNCIONES Y SUS LLAMADAS -------------------
 
     # Tipos de las funciones
     def p_tipo(self, p):
         '''tipo : INT
                 | FLOAT
                 | CHARACTER
-                | BOOLEAN
-                | ID'''
+                | BOOLEAN'''
+        tipo = p[1]
+        if p[1] == 'character':
+            tipo = 'char'
+        elif p[1] == 'boolean':
+            tipo = 'bool'
+        p[0] = tipo
+        # print("Tipo: ", p[0])
+        pass
+
+    def p_tipo_objeto(self, p):
+        '''tipo : ID'''
+        if self.registro.get(p[1]) is None:
+            print(f"ERROR[Sem] El objeto {p[1]} no existe.")
+            p[0] = -1
+        else:
+            p[0] = p[1]
+        # print("Tipo obj: ", p[0])
         pass
 
     # Función
     def p_funcion(self, p):
         '''funcion : FUNCTION ID PARENTHESISOPEN lista_arg PARENTHESISCLOSE COLON tipo LLAVEA axioma RETURN expresion SEMICOLON LLAVEC'''
+        funcion_nombre = p[2]
+        parametros = p[4]
+        self.local_symbols[funcion_nombre] = parametros
+        self.valor_retorno[funcion_nombre] = p[7]
+        print(self.local_symbols)
+        if p[11] == None:
+            return_expr = None
+        else:
+            if p[11][0] != 'character' and p[11][0] != 'int' and p[11][0] != 'float' and p[11][0] != 'bool':
+                print(f"Funcion: {p[2]} con tipo {p[7]} y retorno {p[11][0]}")
+            else:
+                return_type, return_expr = p[7], p[11][0]
+                print(f"Funcion: {p[2]} con tipo {return_type} y retorno {return_expr}")
+                if return_type != return_expr:
+                    print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
+        
+        p[0] = ('funcion', p[2], p[4], p[7], p[11])
         pass
 
     # Lista de argumentos
     def p_lista_arg(self, p):
         '''lista_arg :
                      | lista_arg_rec'''
+        if len(p) == 1:
+            p[0] = []
+        else:
+            p[0] = p[1]
+            # Actualizar la tabla de simbolos con nuevas variables
+            for id in p[1]:
+                if id[1] == 'char':
+                    self.local_aux[id[0]] = (id[1], '0')
+                     
+                elif id[1] == 'int':
+                    self.local_aux[id[0]] = (id[1], 0)
+                elif id[1] == 'float':  
+                    self.local_aux[id[0]] = (id[1], 0.0)
+                elif id[1] == 'bool':
+                    self.local_aux[id[0]] = (id[1], False) 
+                else:
+                    self.local_aux[id[0]] = (id[1], None)   
         pass
 
     def p_lista_arg_rec(self, p):
         '''lista_arg_rec : ID COLON tipo
                          | ID COLON tipo COMA lista_arg_rec'''
+        if len(p) == 4:
+            p[0] = [(p[1], p[3])]
+        else:
+            p[0] = [(p[1], p[3])] + p[5]
         pass
 
     # Llamada a una función
     def p_funcion_call(self, p):
         '''funcion_call : ID PARENTHESISOPEN lista_param PARENTHESISCLOSE'''
+        funcion_nombre = p[1]
+        parametros_llamada = p[3]
+        # Verificar si la función existe en los símbolos locales
+        if funcion_nombre not in self.local_symbols:
+            print(f"ERROR[Sem] La función {funcion_nombre} no está definida.")
+            return
+    
+        parametros_definidos = self.local_symbols[funcion_nombre]
+
+        # Verificar si la cantidad de parámetros coincide
+        if len(parametros_llamada) != len(parametros_definidos):
+            print(f"ERROR[Sem] La cantidad de argumentos no coincide con los parámetros de la función {funcion_nombre}.")
+            return
+        
+        # Verificar tipos de parámetros
+        for i, (arg_name, arg_type) in enumerate(parametros_definidos):
+            parametro_llamada = parametros_llamada[i]
+            if parametro_llamada[0] != arg_type:
+                print(f"ERROR[Sem] El argumento {parametro_llamada[1]} de tipo {parametro_llamada[0]} no coincide con el tipo del parámetro {arg_name} de tipo {arg_type}.")
+                return
+        
+        if self.valor_retorno[funcion_nombre] == 'char':
+            p[0] = (self.valor_retorno[funcion_nombre], '0')
+        elif self.valor_retorno[funcion_nombre] == 'int':
+            p[0] = (self.valor_retorno[funcion_nombre], 0)
+        elif self.valor_retorno[funcion_nombre] == 'float':
+            p[0] = (self.valor_retorno[funcion_nombre], 0.0)
+        elif self.valor_retorno[funcion_nombre] == 'bool':
+            p[0] = (self.valor_retorno[funcion_nombre], False)
         pass
 
     # Lista de parámetros
     def p_lista_param(self, p):
         '''lista_param : 
                        | lista_param_rec'''
+        if len(p) == 1:
+            p[0] = []
+        else:
+            p[0] = p[1]
         pass
 
     def p_lista_param_rec(self, p):
         '''lista_param_rec : expresion
                            | expresion COMA lista_param_rec'''
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1]] + p[3]
         pass
 
-    # ------------------- OBJETOS -------------------
+    # ------------------- OBJETOS AJSON -------------------
 
     # Definición de un objeto
     def p_declaracion_objeto(self, p):
         '''declaracion_objeto : TYPE ID EQUAL objeto_dec'''
+        if p[2] in self.registro:
+            print(f"ERROR[Sem] La re-declaración del objeto {p[2]} no está permitida.")
+            return
+        if len(p) == 5:
+            if p[4] == {}:
+                self.registro[p[2]] = {}
+                print(f"Declaracion de objeto: {p[2]} con propiedades vacías.")
+            else:
+                self.registro[p[2]] = p[4]
+                print(f"Declaracion de objeto: {p[2]} con propiedades {p[4]}")
         pass
 
     def p_objeto_dec(self, p):
-        '''objeto_dec : LLAVEA propiedades_dec LLAVEC'''        
+        '''objeto_dec : LLAVEA propiedades_dec LLAVEC'''
+        dic = {}
+        if len(p) == 4:
+            for elem in p[2]:
+                key, value = elem[0], elem[1]
+                if key is None and value == -1:
+                    continue
+                dic[key] = value
+            p[0] = dic
         pass
 
     def p_propiedades_dec(self, p):
         '''propiedades_dec : 
                            | propiedad_dec
                            | propiedad_dec COMA propiedades_dec'''
+        if len(p) == 1:
+            p[0] = []
+        elif len(p) == 2:
+            p[0] = [p[1]]
+        elif len(p) == 4:
+            p[0] = [p[1]] + p[3]
         pass
 
     def p_propiedad_dec(self, p):
         '''propiedad_dec : ID COLON tipo
                          | STRING COLON tipo'''
+        if p[3] == -1:
+            #print(f"ERROR[Sem] El tipo {p[3]} no existe.")
+            p[0] = (None, -1)
+        else:
+            p[0] = (p[1], p[3])
         pass
 
     def p_propeidad_dec2(self, p):
         '''propiedad_dec : ID COLON objeto_dec
                          | STRING COLON objeto_dec'''
+        p[0] = (p[1], p[3])
         pass
 
     # Asignación de un objeto
     def p_asignacion_objeto(self, p):
         '''asignacion_objeto : LET ID COLON ID EQUAL objeto_asg'''
+        var_name, obj_name = p[2], p[4]
+        if var_name in self.simbolos:
+            print(f"ERROR[Sem] La re-declaración de la variable {var_name} no está permitida.")
+            return
+        if obj_name not in self.registro:
+            print(f"ERROR[Sem] El objeto {obj_name} no existe.")
+            return
+        propiedades = self.registro[obj_name]
+        valores = p[6]
+        if len(p) == 7:
+            # Comprobar que las propiedades del objeto coinciden con las propiedades definidas
+            if all(key in propiedades for key in valores):
+                for key, value in valores.items():
+                    if propiedades[key] != value[0]:
+                        print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el tipo definido.")
+                        return
+            else:
+                for key in valores:
+                    if key not in propiedades:
+                        print(f"ERROR[Sem] La propiedad {key} no coincide con las propiedades definidas.")
+                        return
+            self.simbolos[var_name] = (obj_name, valores)
+            print(f"Asignacion de objeto: {var_name} con valor {valores}")
         pass
 
     def p_objeto_asg(self, p):
         '''objeto_asg : LLAVEA propiedades_asg LLAVEC'''
+        dic = {}
+        if len(p) == 4:
+            for elem in p[2]:
+                key, value = elem[0], elem[1]
+                if key is None and value == -1:
+                    continue
+                dic[key] = value
+            p[0] = dic
         pass
 
     def p_propiedades_asg(self, p):
         '''propiedades_asg : 
                            | propiedad_asg
                            | propiedad_asg COMA propiedades_asg'''
+        if len(p) == 1:
+            p[0] = []
+        elif len(p) == 2:
+            p[0] = [p[1]]
+        elif len(p) == 4:
+            p[0] = [p[1]] + p[3]
         pass
 
     def p_propiedad_asg(self, p):
         '''propiedad_asg : ID COLON expresion
                          | STRING COLON expresion'''
+        if p[3] == -1:
+            # print(f"ERROR[Sem] El tipo {p[3]} no existe.")
+            p[0] = (None, -1)
+        else:
+            p[0] = (p[1], p[3])
         pass
 
     # Acceso a la propiedad de un objeto
     def p_acceso_propiedad(self, p):
         '''acceso_propiedad : ID DOT ID acceso_propiedad_rec
                             | ID BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec'''
+        if len(p) == 5:
+            p[0] = [p[1], p[3]] + p[4]
+        elif len(p) == 6:
+            p[0] = [p[1], p[3]] + p[5]
         pass
 
     def p_acceso_propiedad_rec(self, p):
         '''acceso_propiedad_rec : 
                                 | DOT ID acceso_propiedad_rec
                                 | BRACKETOPEN STRING BRACKETCLOSE acceso_propiedad_rec'''
+        if len(p) == 1:
+            p[0] = []
+        elif len(p) == 4:
+            p[0] = [p[2]] + p[3]
+        elif len(p) == 5:
+            p[0] = [p[2]] + p[4]
         pass
     
     # Acceso al valor de una propiedad de un objeto
-    def p_acceso_obj(self, p):
+    """ def p_acceso_obj(self, p):
         '''acceso_obj : ID DOT ID acceso_obj_rec
                       | ID BRACKETOPEN STRING BRACKETCLOSE acceso_obj_rec'''
         pass
@@ -269,7 +766,7 @@ class ParserClass:
         '''acceso_obj_rec : 
                           | DOT ID acceso_obj_rec
                           | BRACKETOPEN STRING BRACKETCLOSE acceso_obj_rec'''
-        pass
+        pass """
 
     # ------------------- FIN -------------------
 

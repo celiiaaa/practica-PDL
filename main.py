@@ -1,6 +1,6 @@
 import sys
 from mylexer import LexerClass
-from parsersin import ParserClass
+from newparser import ParserClass
 
 def analisis_lexico(input_file):
     lexer = LexerClass()
