@@ -1,6 +1,8 @@
+let a = 0.9 + 0.9;
+
 function resta(a: int, b: character): character {
-    let res = a + a;
-    return 'a';
+    a = a + b;
+    return a;
 }
 
 function suma(a: int, b: int): int {
@@ -10,7 +12,7 @@ function suma(a: int, b: int): int {
 
 function mod(a: int, b: int): int {
     while (a >= b) {
-        a = a - b;
+        a = b - a;
     }
     return a;
 }
@@ -22,10 +24,11 @@ function greatest_common_divisor(a: int, b: int): int {
         b = mod(a, b);
         a = temp;
     }
-    return a;
+    return temp;
 }
 
 
+let p = 1 + a;
 let nada = null;
 let suma2 = suma(1, 9, 0);
 let rest = resta(1, 'a');

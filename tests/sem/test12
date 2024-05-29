@@ -1,11 +1,44 @@
 /* Funciones con objetos */
 
+
+type PERSONA = {
+    id: int,
+    altura: float,
+    direccion: {
+        calle: character,
+        numero: int,
+        viveAhi: boolean,
+    }
+};
+
+let persona1: PERSONA;
+persona1 = {
+    id: 1,
+    altura: 1.89,
+    direccion: {
+        calle: 'a',
+        numero: 10,
+        viveAhi: tr,
+    }
+};
+
+let calle1 = persona1.direccion.calle;
+
+
+
+
 type Point = {x: int, y: int};
+type Point3D = {x: int, y: int, z: int};
+
+function suma_puntos(p1: int, p2: int): int {
+    return 4;
+}
 function get_point_after_jump(point: Point): Point {
     return point;
 }
 
-type Point = {x: int, y: int};
-function get_point_after_jump(point: Point): Point {
-    return {x: 1, y: point.y + 10};
+
+function get_point_after_jump2(point: Point): Point {
+    return {x: 1, y: point.y};
 }
+

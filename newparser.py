@@ -17,6 +17,7 @@ class ParserClass:
         self.local_symbols = {}     # Tabla de símbolos local para funciones
         self.local_aux = {}
         self.valor_retorno = {}
+        self.dentro_funcion = False
 
     start = 'axioma'
 
@@ -88,15 +89,22 @@ class ParserClass:
                 if id in self.simbolos or id in self.registro:
                     print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
                 else:
-                    self.simbolos[id] = (tipo, None)
+                    if self.dentro_funcion == False:
+                        self.simbolos[id] = (tipo, None)
+                    else:
+                        print("tipo", tipo)
+                        self.local_aux[id] = (tipo, None)
                     # print(f"Declaracion: {id} : {self.simbolos[id]}")
             p[0] = ('declaracion', p[2])
         elif len(p) == 5:
             for id in p[2]:
                 # Asignar el tipo del valor asignado a la variable.
                 if p[4] != None:
-                    self.simbolos[id] = p[4]
-                    self.local_aux[id[0]] = p[4]
+                    if self.dentro_funcion == False:
+                        self.simbolos[id] = p[4]
+                    else:
+                        self.local_aux[id] = p[4]
+                    
                 # print(f"Declasign: {id} con valor {p[4]}")
             p[0] = ('declasign', p[2], p[4])
         pass
@@ -212,7 +220,11 @@ class ParserClass:
                         if tipo != None:
                             valor = (tipo, valor[1])
                             print("VALOR: ", valor) """
-                        self.simbolos[id] = p[3]
+                        
+                        if self.dentro_funcion == False:
+                            self.simbolos[id] = p[3]
+                        self.local_aux[id] = p[3]
+                        
                     # print(f"Asignacion: {id} con valor {p[3]}")
         p[0] = ('asignacion', p[1], p[3])
         pass
@@ -287,6 +299,10 @@ class ParserClass:
                     # Operar
                     res = num1[1] + num2[1] if op == '+' else num1[1] - num2[1]
                     p[0] = ('int', res) if res.is_integer() else ('float', res)
+                
+                else:
+                    res = num1[1] + num2[1] if op == '+' else num1[1] - num2[1]
+                    p[0] = (num1[0], res)
 
             # Cast de char a int
             """ if num1[0] == 'char':
@@ -456,13 +472,15 @@ class ParserClass:
     # Término
     def p_termino_identificador(self, p):
         '''termino : ID'''
-        if p[1] not in self.simbolos and p[1] not in self.local_aux:
+        if p[1] in self.local_aux and self.dentro_funcion == True:
+            p[0] = self.local_aux.get(p[1])
+        elif p[1] in self.simbolos and self.dentro_funcion == False:
+            p[0] = self.simbolos.get(p[1])
+        else:
             column = self.find_column(p.lexer.lexdata, p.slice[1])
             print(f"[ERROR][Sem] Variable {p[1]} no existe. line: {p.lineno(1)} position: {column}")
             p[0] = None
-        else:
-            p[0] = self.simbolos.get(p[1], self.local_aux.get(p[1]))
-            print(f"Valor de la variable {p[1]}: {p[0]}")
+            return
         pass
 
     def p_termino_entero(self, p):
@@ -508,6 +526,7 @@ class ParserClass:
         for key in lista:
             print("KEY: ", key)
             dic = val[1]
+            
             if key in dic:
                 dic = dic[key]
                 val = dic
@@ -609,12 +628,35 @@ class ParserClass:
         parametros = p[4]
         self.local_symbols[funcion_nombre] = parametros
         self.valor_retorno[funcion_nombre] = p[7]
-        print(self.local_symbols)
+
         if p[11] == None:
             return_expr = None
         else:
-            if p[11][0] != 'character' and p[11][0] != 'int' and p[11][0] != 'float' and p[11][0] != 'bool':
-                print(f"Funcion: {p[2]} con tipo {p[7]} y retorno {p[11][0]}")
+            if p[11][0] != 'char' and p[11][0] != 'int' and p[11][0] != 'float' and p[11][0] != 'bool' and p[11][0] != None:
+                
+                if isinstance(p[11][0], tuple):
+                    print(f"Funcion: {p[2]} con tipo {p[7][0]} y retorno {p[11][0][0]}")
+                    if p[7] != p[11][0]:
+                        print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
+                
+                else:
+                    if p[7][0] != p[11][0]:
+                            print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
+                    else:
+                        # Comparar los tipos de los campos internos de las estructuras
+                        return_type_fields = p[7][1]
+                        return_expr_fields = p[11][1]
+                        for field in return_type_fields:
+                            
+                            expected_type = return_type_fields[field]
+                            actual_value = return_expr_fields[field]
+                            if isinstance(actual_value, tuple):
+                                actual_type = actual_value[0]
+                            else:
+                                actual_type = actual_value
+                            
+                            if expected_type != actual_type:
+                                print(f"ERROR[Sem] En la función {funcion_nombre}, el campo '{field}' tiene tipo {expected_type} pero el valor retornado es de tipo {actual_type}.")
             else:
                 return_type, return_expr = p[7], p[11][0]
                 print(f"Funcion: {p[2]} con tipo {return_type} y retorno {return_expr}")
@@ -622,12 +664,15 @@ class ParserClass:
                     print(f"ERROR[Sem] El tipo de la función {p[2]} no coincide con el tipo de retorno.")
         
         p[0] = ('funcion', p[2], p[4], p[7], p[11])
+        self.dentro_funcion = False
         pass
 
     # Lista de argumentos
     def p_lista_arg(self, p):
         '''lista_arg :
                      | lista_arg_rec'''
+        
+        self.dentro_funcion = True
         if len(p) == 1:
             p[0] = []
         else:
