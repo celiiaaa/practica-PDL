@@ -531,6 +531,7 @@ class ParserClass:
                 | CHARACTER
                 | BOOLEAN'''
         tipo = p[1]
+        print("Tipo: ", tipo)
         if p[1] == 'character':
             tipo = 'char'
         elif p[1] == 'boolean':

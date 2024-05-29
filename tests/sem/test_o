@@ -1,3 +1,5 @@
+// MAS Y MAS OBJETOS
+
 type Objeto = { prop1 : character, prop2 : int, prop3 : boolean, };
 let objeto : Objeto;
 objeto = { prop1 : 'a', prop2 : 10, prop3 : tr, };

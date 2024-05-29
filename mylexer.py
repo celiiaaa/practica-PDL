@@ -18,9 +18,6 @@ nulo_val = r"null"
 class LexerClass:
     
     reserved = (
-        "TR",
-        "FL",
-        "LET", 
         "INT",
         "FLOAT",
         "CHARACTER",
@@ -28,10 +25,13 @@ class LexerClass:
         "BOOLEAN",
         "FUNCTION",
         "RETURN", 
+        "LET", 
         "TYPE",
         "IF",
         "ELSE",
-        "NULL"
+        "NULL",
+        "TR",
+        "FL"
     )
 
     tokens = (
@@ -150,6 +150,11 @@ class LexerClass:
     def t_NULL(self, t):
         t.value = None
         return t 
+
+    @TOKEN(identifier) 
+    def t_ID(self, t):
+        t.type = LexerClass.reserved_map.get(t.value, "ID")
+        return t
     
     def t_TR(self, t):
         r"tr"
@@ -159,11 +164,6 @@ class LexerClass:
     def t_FL(self, t):
         r"fl"
         t.value = False
-        return t
-
-    @TOKEN(identifier) 
-    def t_ID(self, t):
-        t.type = LexerClass.reserved_map.get(t.value, "ID")
         return t
     
     """ def t_UNICOMMENT(self, t):

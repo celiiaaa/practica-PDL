@@ -1,0 +1,25 @@
+// ACCESO A LOS OBJETOS
+type PERSONA = {
+    id: int,
+    altura: float,
+    direccion: {
+        calle: character,
+        numero: int,
+        viveAhi: boolean,
+    }
+};
+
+type GRUPO = {
+    numero: int,
+    "persona 1": PERSONA,
+    "persona 2": PERSONA,
+    "persona 3": PERSONA,
+    "persona 4": PERSONA,
+};
+
+type CLASE = { 
+    grupo1: GRUPO,
+    grupo2: GRUPO
+};
+
+let persona1;

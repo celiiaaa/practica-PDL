@@ -8,3 +8,4 @@
 !var                    // Identificador que contiene un carácter especial
 var@_1                  // Identificador que contiene un carácter especial
 'abc"def'               // Uso incorrecto de comillas dentro de una cadena de texto
+var_í_                  // Identificador con carácter especial
