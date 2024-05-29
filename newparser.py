@@ -133,6 +133,7 @@ class ParserClass:
             expr = p[3]
             print("ID: ", id)
             if isinstance(id, list):
+                # Se trata de un acceso a una propiedad de un objeto
                 print()
                 print("CLARO QUE ENTRO AQUI")
                 name_var = id[0]
