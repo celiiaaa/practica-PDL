@@ -71,3 +71,5 @@ persona2.direccion.calle = 'x';
 mi_grupo["numero"] = 0B1010;
 mi_grupo["persona 1"].direccion.numero = 0x1A;
 mi_grupo["persona 100"].direccion.viveAhi = false;
+
+persona1 = 123;
