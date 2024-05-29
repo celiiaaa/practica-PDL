@@ -1,4 +1,10 @@
 // ACCESO A LOS OBJETOS
+type dir = {
+    calle: character,
+    numero: int,
+    viveAhi: boolean
+};
+
 type PERSONA = {
     id: int,
     altura: float,
@@ -10,7 +16,7 @@ type PERSONA = {
 };
 
 type GRUPO = {
-    numero: int,
+    "numero": int,
     "persona 1": PERSONA,
     "persona 2": PERSONA,
     "persona 3": PERSONA,
@@ -22,4 +28,45 @@ type CLASE = {
     grupo2: GRUPO
 };
 
-let persona1;
+let persona1: PERSONA;
+persona1 = {
+    id: 1,
+    altura: 1.89,
+    direccion: {
+        calle: 'a',
+        numero: 10,
+        viveAhi: tr,
+    }
+};
+
+let persona2 : PERSONA = {
+    id: 2,
+    altura: 1 + .68,
+    direccion: {
+        calle: 'z',
+        numero: 20,
+        viveAhi: tr,
+    }
+};
+
+let persona3 : PERSONA, persona4 : PERSONA, mi_grupo : GRUPO;
+persona3 = persona1;
+persona4 = persona2;
+
+mi_grupo = {
+    "numero": 80,
+    "persona 1": persona1,
+    "persona 2": persona2,
+    "persona 3": persona3,
+    "persona 4": persona4,
+};
+
+// Acceso a los objetos
+let calle1, altura1;
+calle1 = persona1.direccion.calle;
+altura1 = persona1.altura;
+
+
+persona2.direccion.calle = 'x';
+mi_grupo["numero"] = 0B1010;
+mi_grupo["persona 1"].direccion.numero = 0x1A;
