@@ -197,10 +197,14 @@ class ParserClass:
                     return
                 else:
                     if p[3] != None:
-                        if self.simbolos.get(id, self.local_aux.get(id))[0] != p[3][0]:
-                            print(f"ERROR[Sem] El tipo de la variable {id} no coincide con el tipo de la asignación.")
-                            p[0] = ('asignacion', None)
-                            return
+                        print("AQUIII")
+                        print("ID: ", id)
+                        print("TIPO: ", self.simbolos.get(id, self.local_aux.get(id))[0])
+                        if self.simbolos.get(id, self.local_aux.get(id))[0] != None:
+                            if self.simbolos.get(id, self.local_aux.get(id))[0] != p[3][0]:
+                                print(f"ERROR[Sem] El tipo de la variable {id} no coincide con el tipo de la asignación.")
+                                p[0] = ('asignacion', None)
+                                return
                         """ print("ID", id)
                         valor = p[3]
                         tipo = self.simbolos.get(id, self.local_aux.get(id))[0]
