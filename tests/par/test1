@@ -1,0 +1,35 @@
+// TEST1 PARSER: DECLARACIONES Y ASIGNACIONES.
+
+/* VARIABLES BÁSICAS */
+
+// Declaraciones de variables
+let var_1;
+let varibale_1, variable_2, variable_3;
+let _caracter_1_, _caracter_2_;
+
+// Asignaciones de variables
+var_1 = 1;
+varibale_1, variable_2, variable_3 = 0b101 + (0x1 + 07) * 0.1;
+_caracter_1_, _caracter_2_ = '$';
+
+// Declaraciones y asignaciones de variables
+let variable = -.2 * 0.2e2;
+let res, res2, res3 = 0x1 + 0b1 - 054;
+let cond1, cond2 = tr;
+let _caracter_3_ = 'c';
+
+// ERROR : No se permite las re–declaraciones de variables
+let var_1;
+
+// Reasignación de variables
+variable_1 = 05;
+cond2 = fl;
+var_1, _caracter_2_ = 'h';
+
+/* OBJETOS AJSON */
+
+// Declaraciones de objetos
+type Vacio = {};
+type Objeto = { a: float, b: character, c: boolean };
+type ObjetoAnidado = { a: Objeto, b: Objeto, };
+

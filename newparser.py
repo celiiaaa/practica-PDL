@@ -92,11 +92,11 @@ class ParserClass:
                     # print(f"Declaracion: {id} : {self.simbolos[id]}")
             p[0] = ('declaracion', p[2])
         elif len(p) == 5:
-            # Verificar l        
             for id in p[2]:
                 # Asignar el tipo del valor asignado a la variable.
-                self.simbolos[id] = p[4]
-                self.local_aux[id[0]] = p[4]
+                if p[4] != None:
+                    self.simbolos[id] = p[4]
+                    self.local_aux[id[0]] = p[4]
                 # print(f"Declasign: {id} con valor {p[4]}")
             p[0] = ('declasign', p[2], p[4])
         pass
@@ -130,7 +130,12 @@ class ParserClass:
     def p_asignacion(self, p):
         '''asignacion : lista_id_mas EQUAL expresion'''
         for id in p[1]:
+            expr = p[3]
             if isinstance(id, tuple):
+                if self.comprobar_objeto(id, expr):
+                    self.simbolos[id] = expr
+                """ tipo = self.simbolos.get(id[0], self.local_aux.get(id[0]))[0]
+                print("TIPO: ", tipo)
                 dic = self.simbolos.get(id[0], self.local_aux.get(id[0]))[1]
                 valor_actual = dic
                 lista = id[1:]
@@ -150,12 +155,21 @@ class ParserClass:
                 else:
                     print(f"ERROR[Sem] La propiedad {lista[-1]} no existe en el objeto {id[0]}.")
                     p[0] = ('asignacion', None)
-                    return
+                    return """
             else:
                 if id not in self.simbolos and id not in self.local_aux:
                     print(f"ERROR[Sem] La variable {id} no existe.")
+                    return
                 else:
-                    self.simbolos[id] = p[3]
+                    if p[3] != None:
+                        """ print("ID", id)
+                        valor = p[3]
+                        tipo = self.simbolos.get(id, self.local_aux.get(id))[0]
+                        print("TIPO: ", tipo)
+                        if tipo != None:
+                            valor = (tipo, valor[1])
+                            print("VALOR: ", valor) """
+                        self.simbolos[id] = p[3]
                     # print(f"Asignacion: {id} con valor {p[3]}")
         p[0] = ('asignacion', p[1], p[3])
         pass
@@ -461,7 +475,12 @@ class ParserClass:
 
     def p_termino_objeto(self, p):
         '''termino : objeto_asg'''
-        p[0] = ('obj', p[1])
+        tipo = self.obtener_tipo_objeto(p[1])
+        if tipo is None:
+            print("ERROR[Sem] El tipo de objeto no existe.")
+            p[0] = None
+        else:
+            p[0] = (tipo, p[1])
         pass
 
     # ------------------- CONDICIONALES Y BUCLES -------------------
@@ -526,7 +545,7 @@ class ParserClass:
             print(f"ERROR[Sem] El objeto {p[1]} no existe.")
             p[0] = -1
         else:
-            p[0] = p[1]
+            p[0] = (p[1], self.registro.get(p[1]))
         # print("Tipo obj: ", p[0])
         pass
 
@@ -645,11 +664,12 @@ class ParserClass:
         if p[2] in self.registro:
             print(f"ERROR[Sem] La re-declaración del objeto {p[2]} no está permitida.")
             return
-        if len(p) == 5:
+        else:
             if p[4] == {}:
                 self.registro[p[2]] = {}
                 print(f"Declaracion de objeto: {p[2]} con propiedades vacías.")
             else:
+                print("AQUI", p[4])
                 self.registro[p[2]] = p[4]
                 print(f"Declaracion de objeto: {p[2]} con propiedades {p[4]}")
         pass
@@ -691,6 +711,7 @@ class ParserClass:
     def p_propeidad_dec2(self, p):
         '''propiedad_dec : ID COLON objeto_dec
                          | STRING COLON objeto_dec'''
+        print("OTRO AQUI: ", p[3])
         p[0] = (p[1], p[3])
         pass
 
@@ -698,28 +719,22 @@ class ParserClass:
     def p_asignacion_objeto(self, p):
         '''asignacion_objeto : LET ID COLON ID EQUAL objeto_asg'''
         var_name, obj_name = p[2], p[4]
+        print(f"ENTRO ASIGNACION OBJETO: variable–{var_name} tipo de objeto–{obj_name}")
         if var_name in self.simbolos:
             print(f"ERROR[Sem] La re-declaración de la variable {var_name} no está permitida.")
             return
         if obj_name not in self.registro:
             print(f"ERROR[Sem] El objeto {obj_name} no existe.")
             return
-        propiedades = self.registro[obj_name]
         valores = p[6]
+        valores = (obj_name, valores)
         if len(p) == 7:
             # Comprobar que las propiedades del objeto coinciden con las propiedades definidas
-            if all(key in propiedades for key in valores):
-                for key, value in valores.items():
-                    if propiedades[key] != value[0]:
-                        print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el tipo definido.")
-                        return
+            if self.comprobar_objeto(obj_name, valores):
+                self.simbolos[var_name] = valores
             else:
-                for key in valores:
-                    if key not in propiedades:
-                        print(f"ERROR[Sem] La propiedad {key} no coincide con las propiedades definidas.")
-                        return
-            self.simbolos[var_name] = (obj_name, valores)
-            print(f"Asignacion de objeto: {var_name} con valor {valores}")
+                print(f"ERROR[Sem] Las propiedades del objeto {obj_name} no coinciden con las propiedades definidas.")
+                return
         pass
 
     def p_objeto_asg(self, p):
@@ -789,6 +804,111 @@ class ParserClass:
                           | DOT ID acceso_obj_rec
                           | BRACKETOPEN STRING BRACKETCLOSE acceso_obj_rec'''
         pass """
+
+    """Funcion para comprobar que el objeto exista y que las propiedades sean correctas."""
+
+    def obtener_tipo_objeto(self, valor: dict):
+        """Devolver el nombre del tipo del objeto."""
+        for tipo_objeto, propiedades in self.registro.items():
+            # print("TIPO OBJETO: ", tipo_objeto)
+            # print("PROPIEDADES: ", propiedades)
+            if isinstance(propiedades, dict):  # Comprueba si las propiedades son un diccionario
+                if propiedades.keys() == valor.keys():  # Comprueba si las propiedades coinciden
+                    return tipo_objeto  # Devuelve el nombre del tipo de objeto si coincide
+        return None
+
+    def _comprobar_objeto(self, name_obj, propiedades, valor):
+        # Comprobamos si el tipo de objeto coincide
+        print("-----------------------------")
+        print("COMPROBAR OBJETO REC")
+        print("NAME OBJ: ", name_obj)
+        print("PROPIEDADES: ", propiedades)
+        print("VALOR: ", valor)
+        if all(key in propiedades for key in valor[1]):
+            for key, value in valor[1].items():
+                print("ESTO:")
+                print("key: ", key)
+                print("value: ", value)
+                print("propiedades: ", propiedades)
+                if isinstance(value[1], dict):
+                    if not self._comprobar_objeto(key, propiedades[key][1], value):
+                        return False
+        else:
+            for key in valor[1]:
+                if key not in propiedades:
+                    print(f"ERROR[Sem] La propiedad {key} no coincide con las propiedades definidas.")
+                    return False
+
+        return True
+    
+    def comprobar_objeto(self, name_obj: str, valor: tuple):
+        print("-----------------------------")
+        print("COMPROBAR OBJETO")
+        print("NAME OBJ: ", name_obj)
+        propiedades = self.registro[name_obj]
+        print("PROPIEDADES: ", propiedades)
+        print("VALOR: ", valor)
+        if all(key in propiedades for key in valor[1]):
+            for key, value in valor[1].items():
+                print("ESTO:")
+                print("key: ", key)
+                print("value: ", value)
+                print("propiedades: ", propiedades)
+                if isinstance(value[1], dict):
+                    if not self._comprobar_objeto(key, propiedades[key][1], value):
+                        return False
+        else:
+            for key in valor[1]:
+                if key not in propiedades:
+                    print(f"ERROR[Sem] La propiedad {key} no coincide con las propiedades definidas.")
+                    return False
+        return True
+
+
+    """ def comprobar_objeto(self, name_obj: str, valor: tuple):
+        print()
+        propiedades = self.registro[name_obj]
+        print("PROPIEDADES: ", propiedades)
+        print("VALOR: ", valor)
+        if all(key in propiedades for key in valor[1]):
+            for key, value in valor[1].items():
+                if propiedades[key] != value[0]:
+                    print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el tipo definido.")
+                    return False
+        else:
+            for key in valor[1]:
+                if key not in propiedades:
+                    print(f"ERROR[Sem] La propiedad {key} no coincide con las propiedades definidas.")
+                    return False
+        return True """
+    
+
+    """ def comprobar_anidado(self, name_obj, propiedades, valor):
+        # Comprobamos si el tipo de objeto coincide
+        if isinstance(valor, tuple) and name_obj != valor[0]:
+            print(f"ERROR[Sem] El tipo del objeto {valor[0]} no coincide con el tipo definido.")
+            return False
+
+        # Comprobamos si las propiedades coinciden
+        for key, value in valor[1].items():
+            if key not in propiedades[1] or propiedades[1][key] != value[0]:
+                print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el tipo definido.")
+                return False
+
+            # Si el valor es otro objeto, comprobamos su anidación
+            if isinstance(value[1], dict):
+                if not self.comprobar_anidado(propiedades[1][key], value):
+                    return False
+
+        return True
+ 
+
+    def comprobar_objeto(self, name_obj: str, valor: tuple):
+        propiedades = self.registro[name_obj]
+        print("PROPIEDADES: ", propiedades)
+        print("VALOR: ", valor)
+        return self.comprobar_anidado(name_obj, propiedades, valor)
+    """
 
     # ------------------- FIN -------------------
 

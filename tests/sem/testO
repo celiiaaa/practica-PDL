@@ -43,6 +43,10 @@ let mi_objeto3 : Objeto = { prop1 : 'h', prop2 : 42, inventada : tr, };
 // Asignación de un objeto a una variable con una propiedad de más
 let mi_objeto4 : Objeto = { prop1 : 'h', prop2 : 42, prop3 : tr, prop4 : 123, };
 
+// Asignación de un objeto
+let variable_otra : Objeto;
+variable_otra = { prop1 : 'h', prop2 : 42, prop3 : tr, };
+
 // Acceso a las propiedades de un objeto
 let propiedad1 = mi_objeto.prop1;
 
@@ -63,15 +67,14 @@ mi_objeto.prop3, v1 = fl;
 
 
 // Objetos anidados
-let mi_pais : Pais;
-mi_pais = { nombre : 'e', capital : 'm', 
+let mi_pais : Pais = { nombre : 'e', capital : 'm', 
     dinero : { moneda : 'E', cantidad : 1000 }, 
     idiomas : { "oficial" : { nombre : 's', hablantes : 100 }, 
                 "otro" : { nombre : 'c', hablantes : 50 } },
 };
 
 // Acceso a las propiedades de un objeto anidado
-let nombre_idioma_oficial = mi_pais.idiomas["oficial"].nombre;
+// let nombre_idioma_oficial = mi_pais.idiomas["oficial"].nombre;
 
 // Asignación de una propiedad a un objeto anidado
 // mi_pais.idiomas["otro"].nombre = 'v';

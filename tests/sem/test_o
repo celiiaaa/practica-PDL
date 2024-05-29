@@ -1,0 +1,60 @@
+type Objeto = { prop1 : character, prop2 : int, prop3 : boolean, };
+let objeto : Objeto;
+objeto = { prop1 : 'a', prop2 : 10, prop3 : tr, };
+
+let objeto2 : Objeto = { prop1 : 'b', prop2 : 100, prop3 : fl, };
+
+let objeto3 : Objeto = { prop1 : 'c', prop2 : 'h', prop3 : tr, };
+
+// Objeto anidadoooo
+
+type ListaObjetos = { 
+    "objeto1" : Objeto,
+};
+
+type ListaObjetos = {
+    "objeto1" : { prop1 : character, prop2 : int, prop3 : boolean},
+    "objeto2" : { prop1 : character, prop2 : int, prop3 : boolean},
+    "objeto3" : { prop1 : character, prop2 : int, prop3 : boolean},
+};
+
+let lista : ListaObjetos;
+lista = {
+    "objeto1" : { prop1 : 'a', prop2 : 10, prop3 : tr, },
+};
+
+let lista2 : ListaObjetos = {
+    "objeto1" : { prop1 : 'b', prop2 : 100, prop3 : fl, },
+};
+
+let lista_error1 : ListaObjetos, lista_error2 : ListaObjetos;
+lista_error1 = {
+    "no_objeto" : { prop1 : 'a', prop2 : 10, prop3 : tr, },
+};
+
+lista_error2 = {
+    "objeto1" : { prop1 : 'a', prop2 : 10, prop10 : tr, },
+};
+
+type LISTA = { 
+    "ID": int, "objeto1" : Objeto, "objeto2" : Objeto,
+};
+
+type Cesta = { 
+    "lista1" : LISTA,
+    "lista2" : {"ID": int, "objeto1" : { prop1 : character, prop2 : int, prop3 : boolean, }, "objeto2" : { prop1 : character, prop2 : int, prop3 : boolean, },},
+};
+
+let cesta1 : Cesta;
+cesta1 = {
+    "lista1": {
+        "ID": 1,
+        "objeto1" : { prop1 : 'a', prop2 : 10, prop3 : tr, },
+        "objeto2" : { prop1 : 'b', prop2 : 100, prop3 : fl, },
+    },
+    "lista2": {
+        "ID": 2,
+        "objeto1" : { prop1 : 'X', prop2 : 32, prop3 : fl, },
+        "objeto2" : { prop1 : 'Y', prop2 : 4390, prop3 : fl, },
+    },
+};
