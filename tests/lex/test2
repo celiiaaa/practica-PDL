@@ -1,0 +1,20 @@
+// TEST2 LEXER: COMENTARIOS UNILINEA Y MULTILINEA
+
+// Comentario de una línea OK
+
+// Single line comment // comment
+
+// Comentario multilinea OK
+
+/* multiline comment 
+multiline comment
+multiline comment
+multiline comment
+    multiline comment abc
+*/
+
+// Comentario multilinea anidado NOT OK
+
+/* Comentario externo
+   /* Comentario interno */
+Comentario externo */

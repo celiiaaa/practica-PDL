@@ -1,0 +1,50 @@
+// TEST1 LEXER: NUMEROS : OK
+
+// Enteros
+0
+1
+123456789
+
+// Binarios
+0b0
+0b1
+0B110110 
+0b110110
+
+// Octales
+00
+01
+012
+012345670
+
+// Hexadecimales
+0x1A
+0X1a
+0x123456789abcdef
+0X123456789abcdef
+0x123456789ABCDEF
+0X123456789ABCDEF
+
+// Reales
+0.0
+1.0
+50.
+.501
+3.141596
+
+// Notacion cientifica
+0e0
+1e23
+1e3
+23.e4
+3.5e2
+3.5E7
+
+// Los simbolos negativos no son parte del numero
+-0
+-1
+-0b1010
+-017
+-0X1a
+-3.141596
+-1.E-3

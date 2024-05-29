@@ -1,0 +1,35 @@
+// TEST4 LEXER: PARALBRAS RESERVADAS Y OTROS TOKENS : OK
+
+// Operadores aritméticos
++   -   *   /
+
+// Operadores relacionales
+==  <   <=  >   >=
+
+// Operadores lógicos
+&&  ||  !
+
+// Operadores de asignación
+=
+
+// Parentesis para las operaciones
+(   )
+
+// Inicio y fin de bloque de ejecución, definición de objetos AJSON
+{   }
+
+// Separador de instrucciones
+;
+
+// Anidación y acceso de los objetos AJSON
+.
+[]
+
+// Palabras reservadas
+if   else   while     return
+tr   fl     null
+int   float   boolean   character
+let   type   function
+
+
+

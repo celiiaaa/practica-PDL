@@ -61,3 +61,18 @@ mi_objeto.prop1 = 42;
 // Asignación múltiple
 mi_objeto.prop3, v1 = fl;
 
+
+// Objetos anidados
+let mi_pais : Pais;
+mi_pais = { nombre : 'e', capital : 'm', 
+    dinero : { moneda : 'E', cantidad : 1000 }, 
+    idiomas : { "oficial" : { nombre : 's', hablantes : 100 }, 
+                "otro" : { nombre : 'c', hablantes : 50 } },
+};
+
+// Acceso a las propiedades de un objeto anidado
+let nombre_idioma_oficial = mi_pais.idiomas["oficial"].nombre;
+
+// Asignación de una propiedad a un objeto anidado
+// mi_pais.idiomas["otro"].nombre = 'v';
+// mi_pais.idiomas["otro"].hablantes = 10;

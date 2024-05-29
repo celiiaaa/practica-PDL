@@ -1,0 +1,23 @@
+// TEST2 LEXER: CADENA DE CARACTERES : OK
+
+// Identificadores válidos
+a
+hola
+var1
+d
+_variable_uno_
+variable_2
+_var_3
+var_4_
+
+// Strings
+"Esto es un string"
+"Esto es otro string"
+
+// Caracteres
+'a'
+'ñ'
+'~'
+'$'
+'&'
+'!'

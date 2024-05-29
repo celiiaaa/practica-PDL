@@ -1,0 +1,10 @@
+// TEST5 LEXER: CASOS EXTREMOS CON ERRORES 
+
+'abc'                   // Múltiples caracteres
+90_var   1var           // Las variable no pueden empezar por número
+1.2.3                   // Números decimales con más de un punto
+1.2ee3                  // Notación científica incorrecta
+1.2e3.4                 // Notación científica incorrecta
+!var                    // Identificador que contiene un carácter especial
+var@_1                  // Identificador que contiene un carácter especial
+'abc"def'               // Uso incorrecto de comillas dentro de una cadena de texto
