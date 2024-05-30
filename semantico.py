@@ -1,5 +1,3 @@
-# NO SE SI ESTO ES VERDAD...
-
 class SemanticAnalyzer:
     def __init__(self):
         self.environment = {}
@@ -33,9 +31,9 @@ class SemanticAnalyzer:
     def evaluate_if_statement(self, node):
         condition = self.evaluate(node[1])
         if condition:
-            self.evaluate_program(('program', node[2]))  # Ejecuta el bloque de 'if'
+            self.evaluate_program(('program', node[2]))
         elif node[3] is not None:
-            self.evaluate_program(('program', node[3]))  # Ejecuta el bloque de 'else'
+            self.evaluate_program(('program', node[3]))
 
     def evaluate_expression(self, node):
         return self.evaluate(node)
@@ -45,7 +43,7 @@ class SemanticAnalyzer:
         if identifier in self.environment:
             return self.environment[identifier]
         else:
-            raise Exception(f"Undefined identifier: {identifier}")
+            print(f"ERROR[Sem] Identificador no encontrado: {identifier}")
 
     def evaluate_binary_expression(self, node):
         left = self.evaluate(node[2])
@@ -60,7 +58,7 @@ class SemanticAnalyzer:
         elif operator == '/':
             return left / right
         else:
-            raise Exception(f"Unknown binary operator: {operator}")
+            print(f"ERROR[Sem] Operador binario desconocido: {operator}")
 
     def evaluate_logical_expression(self, node):
         left = self.evaluate(node[2])
@@ -71,7 +69,7 @@ class SemanticAnalyzer:
         elif operator == '||':
             return left or right
         else:
-            raise Exception(f"Unknown logical operator: {operator}")
+            print(f"ERROR[Sem] Operador lógico desconocido: {operator}")
 
     def evaluate_comparison_expression(self, node):
         left = self.evaluate(node[2])
@@ -90,18 +88,4 @@ class SemanticAnalyzer:
         elif operator == '>=':
             return left >= right
         else:
-            raise Exception(f"Unknown comparison operator: {operator}")
-
-# Ejemplo de uso:
-if __name__ == "__main__":
-    import sys
-    from parser import parser
-
-    if len(sys.argv) > 1:
-        with open(sys.argv[1], 'r') as file:
-            data = file.read()
-            ast = parser.parse(data)
-            analyzer = SemanticAnalyzer()
-            analyzer.evaluate(ast)
-    else:
-        print("Usage: python3 semantic_analyzer.py <source_file>")
+            print(f"ERROR[Sem] Operador de comparación desconocido: {operator}")
