@@ -1,0 +1,5 @@
+a: ('float', 1.8)
+p: ('float', 2.8)
+resta1: ('char', '0')
+otro: ('Point', {'x': ('int', 1), 'y': ('int', 9)})
+point: (('Point', {'x': 'int', 'y': 'int'}), {})

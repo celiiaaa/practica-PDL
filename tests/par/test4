@@ -3,17 +3,19 @@
 // Localidad de funciones
 let a = 0.9 + 0.9;
 
-// Funcion con resta de parametros locales
+// Funcion con resta de parametros locales y devolución de tipo incorrecto
 function resta(a: int, b: character): character {
     a = a - b;
     return a;
 }
 
+// Funciones con retorno de tipo correcto
 function suma(a: int, b: int): int {
     let fuga = 1 * 2;
     return fuga;
 }
 
+// función con bucles y condicionales
 function mod(a: int, b: int): int {
     while (a >= b) {
         a = b - a;
@@ -24,6 +26,7 @@ function mod(a: int, b: int): int {
     return a;
 }
 
+// Función con bucle y declaración de variables de manera local
 function greatest_common_divisor(a: int, b: int): int {
     let temp;
     while (!(b == 0)) {
@@ -38,26 +41,40 @@ function greatest_common_divisor(a: int, b: int): int {
 type Point = {x: int, y: int};
 
 
-function suma_puntos(p1: int, p2: int): int {
-    return 4;
-}
-
+// Función que devuelve un objeto
 function get_point_after_jump(point: Point): Point {
     return point;
 }
 
+// Función que devuelve un objeto
 function get_point_after_jump2(point: Point, point2:Point): Point {
-    type Point3D = {x: int, y: int, z: int};
     return {x: 1, y:  1};
 }
 
-// Llamadas a funciones
+// Función que accede a los atributos de un objeto
+function get_point_after_jump3(point1: Point, point2:Point): Point {
+    return {x: point2.x -32, y:  point1.y + 12};
+}
+
+// Comprobación de localidad: 
 let p = 1 + a;
-let nada = null;
+
+// Llamada con numero de argumentos incorrecto
 let suma2 = suma(1, 9, 0);
-let rest = resta(1, 'a');
+
+// Llamada con tipo de argumentos correctos
+let resta1 = resta(1, 'a');
+
+// Llamada con tipo de argumentos incorrectos
+let resta2 = resta(1, 1);
+
+// Llamada a funcion con objeto
 let otro: Point = {x: 1, y: 9};
 let point = get_point_after_jump2(otro, otro);
+
+
+
+
 
 
 

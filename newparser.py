@@ -88,13 +88,18 @@ class ParserClass:
         if len(p) == 3:
             # Actualizar la tabla de simbolos con nuevas variables
             for id, tipo in p[2]:
-                if id in self.simbolos or id in self.registro:
-                    print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
-                else:
-                    if self.dentro_funcion == False:
+                if self.dentro_funcion == False:
+
+                    if id in self.simbolos:
+                        print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
+                    else:
                         self.simbolos[id] = (tipo, None)
+                else:
+                    if id in self.local_aux:
+                        print(f"ERROR[Sem] La re-declaración de la variable {id} no está permitida.")
                     else:
                         self.local_aux[id] = (tipo, None)
+                    
                     # print(f"Declaracion: {id} : {self.simbolos[id]}")
             p[0] = ('declaracion', p[2])
         elif len(p) == 5:
@@ -213,11 +218,12 @@ class ParserClass:
                     if p[3] != None:
                         print("ID: ", id)
                         print("TIPO: ", self.simbolos.get(id, self.local_aux.get(id))[0])
+                        print("OTRA COSA", self.simbolos.get(id))
                         if self.simbolos.get(id, self.local_aux.get(id))[0] != None:
-                            print("VALOR: ", p[3][0])
+                            print("VALOR: ", p[3])
                             print("OTRO VALOR: ", self.simbolos.get(id, self.local_aux.get(id))[0])
                             if self.simbolos.get(id, self.local_aux.get(id))[0] != p[3][0]:
-                                print(f"ERROR[Sem] El tipo de la variable {id} no coincide con el tipo de la asignación.")
+                                #print(f"ERROR[Sem] El tipo de la variable {id} no coincide con el tipo de la asignación.")
                                 p[0] = ('asignacion', None)
                                 return
                         """ print("ID", id)
