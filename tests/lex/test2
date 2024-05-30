@@ -6,11 +6,23 @@
 
 // Comentario multilinea OK
 
-/* multiline comment 
+/* 
+multiline comment 
 multiline comment
 multiline comment
 multiline comment
-    multiline comment abc
+multiline comment
+multiline comment 
+multiline comment
+multiline comment
+multiline comment
+multiline comment
+*/
+
+/*
+    Comentario fuera
+    // Comentario dentro
+    Comentario fuera 
 */
 
 // Comentario multilinea anidado NOT OK
@@ -18,3 +30,4 @@ multiline comment
 /* Comentario externo
    /* Comentario interno */
 Comentario externo */
+

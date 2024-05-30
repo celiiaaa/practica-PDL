@@ -1,4 +1,4 @@
-// TEST1 LEXER: NUMEROS : OK
+
 
 // Enteros
 0
@@ -40,7 +40,7 @@
 3.5e2
 3.5E7
 
-// Los simbolos negativos no son parte del numero
+// Los operadores unarios no son parte del numero
 -0
 -1
 -0b1010
@@ -48,3 +48,10 @@
 -0X1a
 -3.141596
 -1.E-3
++1
++1e3
++0B1001
++2.E-3
+!1
+!0b01
+!0XFFF
