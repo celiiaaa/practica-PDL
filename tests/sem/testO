@@ -67,11 +67,11 @@ mi_objeto.prop3, v1 = fl;
 
 
 // Objetos anidados
-let mi_pais : Pais = { nombre : 'e', capital : 'm', 
+/* let mi_pais : Pais = { nombre : 'e', capital : 'm', 
     dinero : { moneda : 'E', cantidad : 1000 }, 
     idiomas : { "oficial" : { nombre : 's', hablantes : 100 }, 
                 "otro" : { nombre : 'c', hablantes : 50 } },
-};
+}; */
 
 // Acceso a las propiedades de un objeto anidado
 // let nombre_idioma_oficial = mi_pais.idiomas["oficial"].nombre;

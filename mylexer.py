@@ -165,16 +165,6 @@ class LexerClass:
         r"fl"
         t.value = False
         return t
-    
-    """ def t_UNICOMMENT(self, t):
-        r'\/\/.*'
-        t.value = t.value[2:].strip() # Elimina los caracteres // y elimina espacios en blanco al principio y al final
-        pass
-    
-    def t_MULTICOMMENT(self, t):
-        r'/\*(.|\n)*?\*/'
-        t.value = t.value[2:-2].strip()  # Elimina los caracteres /* y */ y elimina espacios en blanco al principio y al final
-        pass """
 
     def t_ignore_COMMENT(self, t):
         r'//.*|/\*(.|\n)*?\*/'
@@ -209,7 +199,7 @@ class LexerClass:
             directory, filename = os.path.split(path)
             filename = os.path.splitext(filename)[0]
             output_filename = os.path.join(directory, filename + ".token")
-            # Escribir la salida
+            # Escribir la salida
             with open(output_filename, 'w') as output_file:
                 for token_type, token_value in output_tokens:
                     output_file.write(f"{token_type} {token_value}\n")

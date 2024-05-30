@@ -1,0 +1,107 @@
+// TEST5 PARSER: CONDICIONALES Y BUCLES
+let cond1 = tr;
+let a;
+
+// Condicion simple
+if (cond1) {
+    a = 1;
+}
+
+// Condicion compuesta
+if (cond1) {
+    a = 1;
+} else {
+    a = 2;
+}
+
+// ERROR: El tipo de condición no es válido
+let cond2 = .12+.23;
+// Condicion simple
+if (cond2) {
+    a = 1;
+}
+
+// Condicion anidada
+let var3 = 0;
+if (var3 == 0) {
+    a = 1;
+    if (a == 2) {
+        a = 2;
+        if (a < 3) {
+            a = 3;
+        } else {
+            a = 4;
+        }
+    } else {
+        a = 5;
+    }
+} else {
+    a = 6;
+}
+
+// Bucle simple
+let i = 0;
+while(i < 10){
+    i = i + 1;
+}
+
+// ERROR: El tipo de condición no es válido
+let cond3 = .12+.23;
+// Condicion simple
+while (cond3) {
+    a = 1;
+}
+
+// Bucle anidado
+let b = 0;
+let z, ini = 1;
+let cond4 = fl;
+while(!(b == 0)){
+    let temp = b;
+    let y;
+    b = 1;
+    y = temp + b;
+    while(!cond4){
+        a = 10;
+        let res;
+        if (a <= z){
+            res = 'c';
+        } else{
+            res = 'p';
+        }
+    } 
+}
+
+
+// Bucle complejo
+let x = 0;
+type AJSON = { "variable1": int, variable2: int };
+let obj: AJSON = { "variable1": 1, variable2: 2 };
+
+while (x < 10) {
+    let y = 0;
+    while (y < 5) {
+        let z = 0;
+        while (z < 3) {
+            if (z == 2) {
+                x = x * 2;
+                obj["variable1"] = obj["variable1"] + 1;
+            } else {
+                let w = 0;
+                while (w < 2) {
+                    if (w == 1) {
+                        x = x + 3;
+                        obj.variable2 = obj["variable2"] * 2;
+                    } else {
+                        x = x + 1;
+                        // ERROR: La propiedad no existe
+                        obj["a"] = obj["a"] * 3;
+                    }
+                    w = w + 1;
+                }
+            }
+            z = z + 1;
+        }
+        y = y + 1;
+    }
+}

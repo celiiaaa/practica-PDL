@@ -1,4 +1,4 @@
-"""PARSER OTRO NUEVO INTENTOOO:((("""
+import os
 import sys
 import ply.yacc as yacc
 from mylexer import LexerClass
@@ -18,6 +18,8 @@ class ParserClass:
         self.local_aux = {}
         self.valor_retorno = {}
         self.dentro_funcion = False
+        self.registro_local = {}
+        self.registro_local_aux = {}
 
     start = 'axioma'
 
@@ -92,7 +94,6 @@ class ParserClass:
                     if self.dentro_funcion == False:
                         self.simbolos[id] = (tipo, None)
                     else:
-                        print("tipo", tipo)
                         self.local_aux[id] = (tipo, None)
                     # print(f"Declaracion: {id} : {self.simbolos[id]}")
             p[0] = ('declaracion', p[2])
@@ -101,6 +102,7 @@ class ParserClass:
                 # Asignar el tipo del valor asignado a la variable.
                 if p[4] != None:
                     if self.dentro_funcion == False:
+                        
                         self.simbolos[id] = p[4]
                     else:
                         self.local_aux[id] = p[4]
@@ -139,6 +141,10 @@ class ParserClass:
         '''asignacion : lista_id_mas EQUAL expresion'''
         for id in p[1]:
             expr = p[3]
+            if expr == -1:
+                print(f"ERROR[Sem] El valor no coincide con el tipo de la variable {id}.")
+                p[0] = ('asignacion', None)
+                return
             print("ID: ", id)
             if isinstance(id, list):
                 # Se trata de un acceso a una propiedad de un objeto
@@ -205,10 +211,11 @@ class ParserClass:
                     return
                 else:
                     if p[3] != None:
-                        print("AQUIII")
                         print("ID: ", id)
                         print("TIPO: ", self.simbolos.get(id, self.local_aux.get(id))[0])
                         if self.simbolos.get(id, self.local_aux.get(id))[0] != None:
+                            print("VALOR: ", p[3][0])
+                            print("OTRO VALOR: ", self.simbolos.get(id, self.local_aux.get(id))[0])
                             if self.simbolos.get(id, self.local_aux.get(id))[0] != p[3][0]:
                                 print(f"ERROR[Sem] El tipo de la variable {id} no coincide con el tipo de la asignación.")
                                 p[0] = ('asignacion', None)
@@ -457,10 +464,19 @@ class ParserClass:
         if num is None:
             print("ERROR[Sem] No se puede realizar la operación.")
             return
+        tipo = ['int', 'float', 'char']
         if op == '+':
-            p[0] = (num[0], +num[1])
+                if num[0]  not in tipo:
+                    print(f"ERROR[Sem] La expresión {num[1]} no permite el operador unario suma.")
+                    p[0] = None
+                else:
+                    p[0] = (num[0], +num[1])
         elif op == '-':
-            p[0] = (num[0], -num[1])
+            if num[0]  not in tipo:
+                    print(f"ERROR[Sem] La expresión {num[1]} no permite el operador unario resta.")
+                    p[0] = None
+            else:
+                p[0] = (num[0], -num[1])
         elif op == '!':
             if num[0] != 'bool':
                 print(f"ERROR[Sem] La expresión {num[1]} no permite el operador not.")
@@ -518,7 +534,8 @@ class ParserClass:
         print()
         print("ACCESO PROPIEDAD – TERMINO: ", p[1])
         name_var = p[1][0]
-        val  = self.simbolos.get(name_var, self.local_aux.get(name_var))
+        print("ESTO ES EL REGISTRO", self.registro_local)
+        val  = self.simbolos.get(name_var, self.registro_local.get(name_var))
         lista = p[1][1:]
         print("NAME: ", name_var)
         print("ESTO ES LA VARIABLE: ", val)
@@ -549,7 +566,7 @@ class ParserClass:
         tipo = self.obtener_tipo_objeto(p[1])
         if tipo is None:
             print("ERROR[Sem] El tipo de objeto no existe.")
-            p[0] = None
+            p[0] = -1
         else:
             p[0] = (tipo, p[1])
         pass
@@ -564,6 +581,7 @@ class ParserClass:
     def p_condicion(self, p):
         '''condicion : IF PARENTHESISOPEN expresion PARENTHESISCLOSE bloque_llaves otra_condicion'''
         valor_cond = p[3]
+        print("VALOR COND: ", valor_cond)
         if valor_cond[0] != 'bool':
             print("ERRROR[Sem] La condicion del if solo permite expresiones de tipo booleano.")
 
@@ -628,11 +646,11 @@ class ParserClass:
         parametros = p[4]
         self.local_symbols[funcion_nombre] = parametros
         self.valor_retorno[funcion_nombre] = p[7]
-
+        
         if p[11] == None:
             return_expr = None
         else:
-            if p[11][0] != 'char' and p[11][0] != 'int' and p[11][0] != 'float' and p[11][0] != 'bool' and p[11][0] != None:
+            if p[11][0] != 'char' and p[11][0] != 'int' and p[11][0] != 'float' and p[11][0] != 'bool':
                 
                 if isinstance(p[11][0], tuple):
                     print(f"Funcion: {p[2]} con tipo {p[7][0]} y retorno {p[11][0][0]}")
@@ -647,7 +665,6 @@ class ParserClass:
                         return_type_fields = p[7][1]
                         return_expr_fields = p[11][1]
                         for field in return_type_fields:
-                            
                             expected_type = return_type_fields[field]
                             actual_value = return_expr_fields[field]
                             if isinstance(actual_value, tuple):
@@ -655,8 +672,10 @@ class ParserClass:
                             else:
                                 actual_type = actual_value
                             
+                            print(f"actual type: {actual_type} expected type: {expected_type}")
                             if expected_type != actual_type:
                                 print(f"ERROR[Sem] En la función {funcion_nombre}, el campo '{field}' tiene tipo {expected_type} pero el valor retornado es de tipo {actual_type}.")
+                                return 
             else:
                 return_type, return_expr = p[7], p[11][0]
                 print(f"Funcion: {p[2]} con tipo {return_type} y retorno {return_expr}")
@@ -680,8 +699,7 @@ class ParserClass:
             # Actualizar la tabla de simbolos con nuevas variables
             for id in p[1]:
                 if id[1] == 'char':
-                    self.local_aux[id[0]] = (id[1], '0')
-                     
+                    self.local_aux[id[0]] = (id[1], '0')  
                 elif id[1] == 'int':
                     self.local_aux[id[0]] = (id[1], 0)
                 elif id[1] == 'float':  
@@ -689,7 +707,30 @@ class ParserClass:
                 elif id[1] == 'bool':
                     self.local_aux[id[0]] = (id[1], False) 
                 else:
-                    self.local_aux[id[0]] = (id[1], None)   
+                    print("NASDAGSF", id[1])
+                    dic = {}
+                    print(id)
+                    
+                    for key in id[1][1]:
+                        print("KEY: ", key)
+                        tipo = id[1][1][key]
+                        print("TIPO: ", tipo)
+                        """if isinstance(tipo, tuple):
+                            dic[key] = tipo
+                        else:"""
+                        
+                        if tipo == 'char':
+                            dic[key] = (tipo, '0')
+                        elif tipo == 'int':
+                            dic[key] = (tipo, 0)
+                        elif tipo == 'float':
+                            dic[key] = (tipo, 0.0)
+                        elif tipo == 'bool':
+                            dic[key] = (tipo, False)
+
+                    self.registro_local[id[0]] = (id[1][0], dic)  
+                    self.local_aux[id[0]] = (id[1][0], dic)   
+                    
         pass
 
     def p_lista_arg_rec(self, p):
@@ -719,11 +760,19 @@ class ParserClass:
             return
         
         # Verificar tipos de parámetros
+        print("PARAMETROS DEFINIDOS: ", parametros_definidos)
+        print("PARAMETROS LLAMADA: ", parametros_llamada)
         for i, (arg_name, arg_type) in enumerate(parametros_definidos):
             parametro_llamada = parametros_llamada[i]
-            if parametro_llamada[0] != arg_type:
-                print(f"ERROR[Sem] El argumento {parametro_llamada[1]} de tipo {parametro_llamada[0]} no coincide con el tipo del parámetro {arg_name} de tipo {arg_type}.")
-                return
+            
+            if isinstance(arg_type, tuple):
+                if parametro_llamada[0] != arg_type[0]:
+                    print(f"ERROR[Sem] El argumento {parametro_llamada[1]} de tipo {parametro_llamada[0]} no coincide con el tipo del parámetro {arg_name} de tipo {arg_type}.")
+                    return
+            else:
+                if parametro_llamada[0] != arg_type:
+                    print(f"ERROR[Sem] El argumento {parametro_llamada[1]} de tipo {parametro_llamada[0]} no coincide con el tipo del parámetro {arg_name} de tipo {arg_type}.")
+                    return
         
         if self.valor_retorno[funcion_nombre] == 'char':
             p[0] = (self.valor_retorno[funcion_nombre], '0')
@@ -733,6 +782,8 @@ class ParserClass:
             p[0] = (self.valor_retorno[funcion_nombre], 0.0)
         elif self.valor_retorno[funcion_nombre] == 'bool':
             p[0] = (self.valor_retorno[funcion_nombre], False)
+        else:
+            p[0] = (self.valor_retorno[funcion_nombre], {})
         pass
 
     # Lista de parámetros
@@ -759,17 +810,28 @@ class ParserClass:
     # Definición de un objeto
     def p_declaracion_objeto(self, p):
         '''declaracion_objeto : TYPE ID EQUAL objeto_dec'''
-        if p[2] in self.registro:
-            print(f"ERROR[Sem] La re-declaración del objeto {p[2]} no está permitida.")
-            return
-        else:
-            if p[4] == {}:
-                self.registro[p[2]] = {}
-                print(f"Declaracion de objeto: {p[2]} con propiedades vacías.")
+        print("ESTOY dentro", self.dentro_funcion)
+        if self.dentro_funcion:
+            if p[2] in self.registro_local_aux:
+                print(f"ERROR[Sem] La re-declaración del objeto {p[2]} no está permitida.")
+                return
             else:
-                print("AQUI", p[4])
-                self.registro[p[2]] = p[4]
-                print(f"Declaracion de objeto: {p[2]} con propiedades {p[4]}")
+                self.registro_local_aux[p[2]] = p[4]
+        else:
+            if p[2] in self.registro:
+                print(f"ERROR[Sem] La re-declaración del objeto {p[2]} no está permitida.")
+                return
+            else:
+                if p[4] == {}:
+                    self.registro[p[2]] = {}
+                    
+                    print(f"Declaracion de objeto: {p[2]} con propiedades vacías.")
+                else:
+                    print("AQUI", p[4])              
+                    
+                    self.registro[p[2]] = p[4]
+                    
+                    print(f"Declaracion de objeto: {p[2]} con propiedades {p[4]}")
         pass
 
     def p_objeto_dec(self, p):
@@ -816,20 +878,33 @@ class ParserClass:
     # Asignación de un objeto
     def p_asignacion_objeto(self, p):
         '''asignacion_objeto : LET ID COLON ID EQUAL objeto_asg'''
+        print("dentro", self.dentro_funcion)
         var_name, obj_name = p[2], p[4]
         print(f"ENTRO ASIGNACION OBJETO: variable–{var_name} tipo de objeto–{obj_name}")
-        if var_name in self.simbolos:
-            print(f"ERROR[Sem] La re-declaración de la variable {var_name} no está permitida.")
-            return
-        if obj_name not in self.registro:
-            print(f"ERROR[Sem] El objeto {obj_name} no existe.")
-            return
+
+        if self.dentro_funcion:
+            if obj_name in self.registro_local_aux:
+                print(f"ERROR[Sem] El objeto {obj_name} no existe.")
+                return
+            if var_name in self.registro_local:
+                print(f"ERROR[Sem] La re-declaración de la variable {var_name} no está permitida.")
+                return
+        else:
+            if var_name in self.simbolos:
+                print(f"ERROR[Sem] La re-declaración de la variable {var_name} no está permitida.")
+                return
+            if obj_name not in self.registro:
+                print(f"ERROR[Sem] El objeto {obj_name} no existe.")
+                return
         valores = p[6]
         valores = (obj_name, valores)
         if len(p) == 7:
             # Comprobar que las propiedades del objeto coinciden con las propiedades definidas
             if self.comprobar_objeto(obj_name, valores):
-                self.simbolos[var_name] = valores
+                if self.dentro_funcion:
+                    self.registro_local_aux[var_name] = valores
+                else:
+                    self.simbolos[var_name] = valores
             else:
                 print(f"ERROR[Sem] Las propiedades del objeto {obj_name} no coinciden con las propiedades definidas.")
                 return
@@ -947,10 +1022,9 @@ class ParserClass:
         print("PROPIEDADES: ", propiedades)
         print("VALOR: ", valor)
         if all(key in propiedades for key in valor[1]):
-            for i, val in enumerate(valor[1].items()):
+            for val in valor[1].items():
                 key, value = val
                 print("ESTO:")
-                print("I: ", i)
                 print("key: ", key)
                 print("value: ", value)
                 print("propiedades: ", propiedades)
@@ -968,54 +1042,8 @@ class ParserClass:
                     print(f"ERROR[Sem] La propiedad {key} no coincide con las propiedades definidas.")
                     return False
         return True
-
-
-    """ def comprobar_objeto(self, name_obj: str, valor: tuple):
-        print()
-        propiedades = self.registro[name_obj]
-        print("PROPIEDADES: ", propiedades)
-        print("VALOR: ", valor)
-        if all(key in propiedades for key in valor[1]):
-            for key, value in valor[1].items():
-                if propiedades[key] != value[0]:
-                    print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el tipo definido.")
-                    return False
-        else:
-            for key in valor[1]:
-                if key not in propiedades:
-                    print(f"ERROR[Sem] La propiedad {key} no coincide con las propiedades definidas.")
-                    return False
-        return True """
     
-
-    """ def comprobar_anidado(self, name_obj, propiedades, valor):
-        # Comprobamos si el tipo de objeto coincide
-        if isinstance(valor, tuple) and name_obj != valor[0]:
-            print(f"ERROR[Sem] El tipo del objeto {valor[0]} no coincide con el tipo definido.")
-            return False
-
-        # Comprobamos si las propiedades coinciden
-        for key, value in valor[1].items():
-            if key not in propiedades[1] or propiedades[1][key] != value[0]:
-                print(f"ERROR[Sem] El tipo de la propiedad {key} no coincide con el tipo definido.")
-                return False
-
-            # Si el valor es otro objeto, comprobamos su anidación
-            if isinstance(value[1], dict):
-                if not self.comprobar_anidado(propiedades[1][key], value):
-                    return False
-
-        return True
- 
-
-    def comprobar_objeto(self, name_obj: str, valor: tuple):
-        propiedades = self.registro[name_obj]
-        print("PROPIEDADES: ", propiedades)
-        print("VALOR: ", valor)
-        return self.comprobar_anidado(name_obj, propiedades, valor)
-    """
-
-    # ------------------- FIN -------------------
+    # ------------------- ESCRIBIR FICHEROS -------------------
 
     def print_simbolos(self):
         print("Simbolos: ")
@@ -1041,9 +1069,21 @@ class ParserClass:
         self.parser.parse(data)
 
     def test_with_files(self, path):
-            file = open(path)
-            content = file.read()  
-            self.test(content)
+        file = open(path)
+        content = file.read()  
+        self.test(content)
+        # Escribir el fichero de salida
+        directory, filename = os.path.split(path)
+        filename = os.path.splitext(filename)[0]
+        output_filename1 = os.path.join(directory, filename + ".symbols")
+        output_filename2 = os.path.join(directory, filename + ".register")
+        with open(output_filename1, 'w') as f1:
+            for simbolo in self.simbolos:
+                f1.write(f"{simbolo}: {self.simbolos[simbolo]}\n")
+        with open(output_filename2, 'w') as f2:
+            for simbolo in self.registro:
+                f2.write(f"{simbolo}: {self.registro[simbolo]}\n")
+
 
 if __name__ == "__main__":
     parser = ParserClass()

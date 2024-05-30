@@ -1,7 +1,11 @@
+// TEST4 PARSER: FUNCIONES
+
+// Localidad de funciones
 let a = 0.9 + 0.9;
 
+// Funcion con resta de parametros locales
 function resta(a: int, b: character): character {
-    a = a + b;
+    a = a - b;
     return a;
 }
 
@@ -13,6 +17,9 @@ function suma(a: int, b: int): int {
 function mod(a: int, b: int): int {
     while (a >= b) {
         a = b - a;
+        if (a == b) {
+            a = 0;
+        }
     }
     return a;
 }
@@ -44,7 +51,7 @@ function get_point_after_jump2(point: Point, point2:Point): Point {
     return {x: 1, y:  1};
 }
 
-
+// Llamadas a funciones
 let p = 1 + a;
 let nada = null;
 let suma2 = suma(1, 9, 0);

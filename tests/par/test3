@@ -1,0 +1,126 @@
+// TEST3 PARSER: DECLARACIONES Y ASIGNACIONES: OBJETOS AJSON.
+
+type dir = {
+    calle: character,
+    numero: int,
+    viveAhi: boolean
+};
+
+// ERROR: No se permite la re–declaración de los objetos
+type dir = {};
+
+type PERSONA = {
+    id: int,
+    altura: float,
+    direccion: {
+        calle: character,
+        numero: int,
+        viveAhi: boolean,
+    }
+};
+
+type GRUPO = {
+    "numero": int,
+    "persona 1": PERSONA,
+    "persona 2": PERSONA,
+    "persona 3": PERSONA,
+    "persona 4": PERSONA,
+};
+
+type CLASE = { 
+    grupo1: GRUPO,
+    grupo2: GRUPO
+};
+
+// Primero la declaración
+let persona1: PERSONA;
+// Luego la asignación
+persona1 = {
+    id: 1,
+    altura: 1.89,
+    direccion: {
+        calle: 'a',
+        numero: 10,
+        viveAhi: tr,
+    }
+};
+
+// La declaración y la asignación
+let persona2 : PERSONA = {
+    id: 2,
+    altura: 1 + .68,
+    direccion: {
+        calle: 'z',
+        numero: 20,
+        viveAhi: tr,
+    }
+};
+
+// Múltiple declaración de variables: básicas y complejas
+let persona3 : PERSONA, persona4 : PERSONA, mi_grupo : GRUPO;
+persona3 = persona1;
+persona4 = persona2;
+
+// Re–asignación de una variable de tipo objeto
+persona4 = {
+    id: 4,
+    altura: 1 + .68,
+    direccion: {
+        calle: 'k',
+        numero: 20,
+        viveAhi: tr,
+    }
+};
+
+// Objeto con múltiples objetos anidados
+mi_grupo = {
+    "numero": 80,
+    "persona 1": persona1,
+    "persona 2": persona2,
+    "persona 3": persona3,
+    "persona 4": persona4,
+};
+
+// ERROR: Re–asignación no válida. Se trata de una variable de tipo objeto AJSON
+persona1 = 123;
+
+// ERROR: No existe el Objeto
+let error : NoExiste;
+
+// ERROR: Una propiedad del objeto falta por declarar
+let mi_direccion : dir;
+mi_direccion = {
+    calle: 'a',
+    numero: 10,
+};
+
+// ERROR: El tipo de una propiedad no es correcto
+let nueva_direccion: dir;
+nueva_direccion = {
+    calle: 'a',
+    numero: 10.2,
+    viveAhi: tr
+};
+
+// ERROR: El tipo de un propiedad de un objeto anidado no es correcto
+let nuevo_grupo : GRUPO = {
+    "id": 99,
+    "persona1": persona1,
+};
+
+
+/* Acceso a los objetos */
+
+// Asignación de variables con las propiedades de los objetos
+let calle1, altura1;
+calle1 = persona1.direccion.calle;
+altura1 = persona1.altura;
+
+// Re–asignación de las propiedades
+persona2.direccion.calle = 'x';
+mi_grupo["numero"] = 0B1010;
+mi_grupo["persona 1"].direccion.numero = 0x1A;
+
+// ERROR: La clave no existe en el objeto
+mi_grupo["persona 100"].direccion.viveAhi = fl;
+
